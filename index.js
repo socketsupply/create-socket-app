@@ -41,16 +41,15 @@ async function main () {
   ]
 
   try {
-    const entries = (await fs.promises
-      .readdir(process.cwd()))
+    const entries = (await fs.promises.readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
     if (entries.length) {
-      process.stdout.write('\nThe current directory is not empty')
+      process.stdout.write('\nThe current directory is not empty\n')
       process.exit(1)
     }
   } catch (err) {
-    process.stdout.write(`\nUnable to read the current directory: ${err.message}`)
+    process.stdout.write(`\nUnable to read the current directory: ${err.message}\n`)
     process.exit(1)
   }
 
@@ -61,7 +60,7 @@ async function main () {
     process.stdout.write('\nCreating socket files...')
     await exec('ssc init')
   } catch (err) {
-    process.stdout.write(`\nUnable to create socket files: ${err.message}`)
+    process.stdout.write(`\nUnable to create socket files: ${err.message}\n`)
   }
   process.stdout.write('OK')
 
@@ -72,7 +71,7 @@ async function main () {
     process.stdout.write('\nInitializing npm package...')
     await exec('npm init -y')
   } catch (err) {
-    process.stdout.write(`\nUnable to run npm init: ${err.message}`)
+    process.stdout.write(`\nUnable to run npm init: ${err.message}\n`)
     process.exit(1)
   }
   process.stdout.write('OK')
@@ -89,11 +88,32 @@ async function main () {
     process.stdout.write('\nInstalling dependencies...')
     await exec(`npm install ${packages.join(' ')}`)
   } catch (err) {
-    process.stdout.write(`\nUnable to run npm init: ${err.message}`)
+    process.stdout.write(`\nUnable to run npm init: ${err.message}\n`)
+    process.exit(1)
+  }
+  process.stdout.write('OK')
+
+  process.stdout.write('\nAdding package scripts...')
+  let pkg
+
+  try {
+    pkg = JSON.parse(await fs.promises.readFile('package.json'))
+  } catch (err) {
+    process.stdout.write(`\nUnable to read package.json: ${err.message}\n`)
+    process.exit(1)
+  }
+
+  pkg.scripts.start = 'ssc build -r'
+
+  try {
+    fs.promises.writeFile('package.json', JSON.stringify(pkg))
+  } catch (err) {
+    process.stdout.write(`\nUnable to write package.json: ${err.message}\n`)
     process.exit(1)
   }
 
   process.stdout.write('OK\n')
+  process.stdout.write('\nTry \'npm start\' to launch the app\n')
 }
 
 main()
