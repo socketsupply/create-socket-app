@@ -41,16 +41,16 @@ async function main () {
   ]
 
   try {
-    const entries = await fs.promises
-      .readdir(process.cwd())
+    const entries = (await fs.promises
+      .readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
     if (entries.length) {
-      console.log('The current directory is not empty')
+      process.stdout.write('\nThe current directory is not empty')
       process.exit(1)
     }
   } catch (err) {
-    console.log('Unable to read the current directory', err.message)
+    process.stdout.write(`\nUnable to read the current directory: ${err.message}`)
     process.exit(1)
   }
 
@@ -58,20 +58,42 @@ async function main () {
   // Initialize the current directory as a socket app.
   //
   try {
+    process.stdout.write('\nCreating socket files...')
     await exec('ssc init')
   } catch (err) {
-    if (err.code === 127) await install()
+    process.stdout.write(`\nUnable to create socket files: ${err.message}`)
   }
+  process.stdout.write('OK')
 
   //
   // Create a package.json that has the io module and a basic build setup.
   //
   try {
-    await exec('npm init')
+    process.stdout.write('\nInitializing npm package...')
+    await exec('npm init -y')
   } catch (err) {
-    console.log('Unable to run npm init')
+    process.stdout.write(`\nUnable to run npm init: ${err.message}`)
     process.exit(1)
   }
+  process.stdout.write('OK')
+
+  const packages = [
+    '@socketsupply/socket-api',
+    'esbuild'
+  ]
+
+  //
+  // Install an opinionated base of modules for building a simple app.
+  //
+  try {
+    process.stdout.write('\nInstalling dependencies...')
+    await exec(`npm install ${packages.join(' ')}`)
+  } catch (err) {
+    process.stdout.write(`\nUnable to run npm init: ${err.message}`)
+    process.exit(1)
+  }
+
+  process.stdout.write('OK\n')
 }
 
 main()
