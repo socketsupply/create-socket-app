@@ -65,6 +65,7 @@ async function main () {
   // Copy some files into the new project
   //
   await cp('src/index.html', target)
+  await cp('src/index.css', target)
   await cp('src/icon.png', target)
 }
 
