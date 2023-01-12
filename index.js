@@ -4,6 +4,7 @@ import path from 'path'
 import { exec as ecp } from 'child_process'
 
 const exec = util.promisify(ecp)
+const __dirname = new URL(path.dirname(import.meta.url)).pathname
 
 const cp = async (a, b) => fs.promises.cp(
   path.resolve(a),
@@ -11,17 +12,45 @@ const cp = async (a, b) => fs.promises.cp(
   { recursive: true, force: true }
 )
 
+async function help (templateNames) {
+  console.log(`usage: create-socket-app <${templateNames.join(' | ')}>`)
+}
+
 async function install () {
 }
 
-async function main () {
+const templates = {}
+
+templates.vanilla = async () => {
+  const src = path.join(__dirname, 'templates', 'vanilla')
+  const buildScript = path.join(src, 'build.js')
+
+  await cp(buildScript, process.cwd())
+  await cp(path.join(src, 'index.js'), path.join(process.cwd(), 'src'))
+  await cp(path.join(src, 'index.html'), path.join(process.cwd(), 'src'))
+  await cp(path.join(src, 'index.css'), path.join(process.cwd(), 'src'))
+  await cp(path.join(src, 'icon.png'), path.join(process.cwd(), 'src'))
+}
+
+async function main (argv) {
+  const templateNames = await fs.promises.readdir(path.join(__dirname, 'templates'))
+
+  if (!argv.length || argv.find(s => s.includes('-h'))) {
+    return help(templateNames)
+  }
+
+  if (argv[0] && templateNames.findIndex(s => s === argv[0]) === -1) {
+    console.error(`Unable to find template "${argv[0]}"`)
+    return help(templateNames)
+  }
+
   //
   // Check if the ssc command is installed, if not install it.
   //
   try {
     await exec('ssc')
   } catch (err) {
-    if (err.code === 127) install()
+    if (err.code === 127) await install()
   }
 
   //
@@ -145,21 +174,7 @@ async function main () {
   process.stdout.write('\nCopying project boilerplate...')
 
   try {
-    const url = new URL(path.dirname(import.meta.url))
-    const buildScript = path.join(url.pathname, 'fixtures', 'build.js')
-    await cp(buildScript, process.cwd())
-
-    const indexScript = path.join(url.pathname, 'fixtures', 'index.js')
-    await cp(indexScript, path.join(process.cwd(), 'src'))
-
-    const indexHTML = path.join(url.pathname, 'fixtures', 'index.html')
-    await cp(indexHTML, path.join(process.cwd(), 'src'))
-
-    const indexCSS = path.join(url.pathname, 'fixtures', 'index.css')
-    await cp(indexCSS, path.join(process.cwd(), 'src'))
-
-    const icon = path.join(url.pathname, 'fixtures', 'icon.png')
-    await cp(icon, path.join(process.cwd(), 'src'))
+    await templates[argv[0]]()
   } catch (err) {
     process.stdout.write(`\nUnable to copy build.js: ${err.message}\n`)
     process.exit(1)
@@ -170,4 +185,4 @@ async function main () {
   process.stdout.write('\nTry \'npm start\' to launch the app\n')
 }
 
-main()
+main(process.argv.slice(2))
