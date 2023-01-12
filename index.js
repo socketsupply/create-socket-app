@@ -32,6 +32,35 @@ templates.vanilla = async () => {
   await cp(path.join(src, 'icon.png'), path.join(process.cwd(), 'src'))
 }
 
+templates.tonic = async () => {
+  process.stdout.write('\nInstalling Tonic Framework...')
+
+  const packages = [
+    '@socketsupply/components',
+    '@socketsupply/tonic'
+  ]
+
+  //
+  // Install an opinionated base of modules for building a simple app.
+  //
+  try {
+    await exec(`npm install ${packages.join(' ')}`)
+  } catch (err) {
+    process.stdout.write(`\nUnable to run npm install: ${err.message}\n`)
+    process.exit(1)
+  }
+
+  const src = path.join(__dirname, 'templates', 'tonic')
+  const buildScript = path.join(src, 'build.js')
+
+  await cp(buildScript, process.cwd())
+  await cp(path.join(src, 'index.js'), path.join(process.cwd(), 'src'))
+  await cp(path.join(src, 'index.html'), path.join(process.cwd(), 'src'))
+  await cp(path.join(src, 'index.css'), path.join(process.cwd(), 'src'))
+  await cp(path.join(src, 'icon.png'), path.join(process.cwd(), 'src'))
+  process.stdout.write('OK')
+}
+
 async function main (argv) {
   const templateNames = await fs.promises.readdir(path.join(__dirname, 'templates'))
 
@@ -124,7 +153,7 @@ async function main (argv) {
     process.stdout.write('\nInstalling dependencies...')
     await exec(`npm install ${packages.join(' ')}`)
   } catch (err) {
-    process.stdout.write(`\nUnable to run npm init: ${err.message}\n`)
+    process.stdout.write(`\nUnable to run npm install: ${err.message}\n`)
     process.exit(1)
   }
   process.stdout.write('OK')
@@ -189,7 +218,7 @@ async function main (argv) {
 
   process.stdout.write('OK\n')
 
-  process.stdout.write('\nTry \'npm start\' to launch the app\n')
+  process.stdout.write('\nType \'npm start\' to launch the app\n')
 }
 
 main(process.argv.slice(2))
