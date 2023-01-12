@@ -54,7 +54,7 @@ async function main () {
   //
   // Not writing a package json to your project could be a security risk
   //
-  await fs.writeFileSync(path.join(target, 'package.json'), '{}')
+  await fs.promises.writeFile(path.join(target, 'package.json'), '{ "private": true }')
 
   if (!target) {
     console.log('Did not receive the build target path as an argument!')

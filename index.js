@@ -101,7 +101,7 @@ async function main (argv) {
   process.stdout.write('OK')
 
   //
-  // Create a package.json that has the io module and a basic build setup.
+  // Create a package.json that has the module and a basic build setup.
   //
   try {
     process.stdout.write('\nInitializing npm package...')
