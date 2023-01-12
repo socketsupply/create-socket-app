@@ -148,6 +148,7 @@ async function main (argv) {
     process.stdout.write(`\nUnable to write package.json: ${err.message}\n`)
     process.exit(1)
   }
+
   process.stdout.write('OK')
 
   let config
@@ -162,9 +163,15 @@ async function main (argv) {
 
   const oldCommand = '; build = "node build-script.js"'
   const newCommand = 'build = "node build.js"'
+  const oldName = 'name = "beepboop"'
+  const newName = `name = "${pkg.name}"`
+
+  config = config
+    .replace(oldCommand, newCommand)
+    .replace(oldName, newName)
 
   try {
-    await fs.promises.writeFile('socket.ini', config.replace(oldCommand, newCommand))
+    await fs.promises.writeFile('socket.ini', config)
   } catch (err) {
     process.stdout.write(`\nUnable to write socket.ini: ${err.message}\n`)
     process.exit(1)
