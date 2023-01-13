@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs from 'node:fs'
 import util from 'util'
 import path from 'path'
