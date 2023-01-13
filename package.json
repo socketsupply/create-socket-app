@@ -2,7 +2,9 @@
   "name": "create-socket-app",
   "version": "1.0.4",
   "description": "Create Socket App",
-  "bin": "index.js",
+  "bin": {
+    "create-socket-app": "./index.js"
+  },
   "scripts": {
     "pretest": "standard",
     "test": ""
