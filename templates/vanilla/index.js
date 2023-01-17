@@ -6,7 +6,9 @@ if (api.process.env.DEBUG) {
 
 window.addEventListener('DOMContentLoaded', () => {
   const os = api.os.platform()
-  const h1 = document.createElement('h1')
-  h1.textContent = `Hello, ${os}!`
-  document.body.appendChild(h1)
+
+  setTimeout(() => {
+    const h1 = document.querySelector('h1')
+    h1.textContent = `Hello, ${os}!`
+  }, 2048)
 })
