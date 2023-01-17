@@ -14,12 +14,14 @@ const cp = async (a, b) => fs.promises.cp(
 )
 
 async function main () {
+  const prod = process.argv.find(s => s.includes('--prod'))
+
   const params = {
     entryPoints: ['src/index.js'],
     format: 'esm',
     bundle: true,
-    minify: false,
-    sourcemap: true,
+    minify: !!prod,
+    sourcemap: !prod,
     keepNames: true
   }
 
