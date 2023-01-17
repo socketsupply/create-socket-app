@@ -220,7 +220,7 @@ async function main (argv) {
 
   process.stdout.write('OK\n')
 
-  process.stdout.write('\nType \'npm start\' to launch the app\n')
+  process.stdout.write('\nType \'ssc build -r\' to build and run the app\n')
 }
 
 main(process.argv.slice(2))
