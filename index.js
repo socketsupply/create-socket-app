@@ -30,7 +30,7 @@ const DEFAULT_PACKAGES = [
 const templates = {}
 
 templates.tonic = {
-  packages: ['@socketsupply/components', '@socketsupply/tonic']
+  packages: ['@socketsupply/tonic']
 }
 
 async function main (argv) {

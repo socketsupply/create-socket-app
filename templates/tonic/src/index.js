@@ -1,22 +1,21 @@
-import api from '@socketsupply/socket-api'
+import process from '@socketsupply/socket-api/process'
+import os from '@socketsupply/socket-api/os'
 import Tonic from '@socketsupply/tonic'
-import { Components } from '@socketsupply/components'
 
-if (api.process.env.DEBUG) {
+if (process.env.DEBUG) {
   console.log('started in debug mode')
 }
 
 class AppContainer extends Tonic {
   render () {
-    const os = api.os.platform()
+    const paltform = os.platform()
 
     return this.html`
-      <h1>Hello, ${os}!</h1>
+      <h1>Hello, ${paltform}!</h1>
     `
   }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  Components(Tonic)
-  Tonic.add(AppContainer)
+  Tonic.add(AppContainer, 'app-container')
 })

@@ -21,8 +21,7 @@ async function main () {
     format: 'esm',
     bundle: true,
     minify: !!prod,
-    sourcemap: !prod,
-    keepNames: true
+    sourcemap: !prod
   }
 
   const watch = process.argv.find(s => s.includes('--watch='))
@@ -66,9 +65,11 @@ async function main () {
   //
   // Copy some files into the new project
   //
-  await cp('src/index.html', target)
-  await cp('src/index.css', target)
-  await cp('src/icon.png', target)
+  await Promise.all([
+    cp('src/index.html', target),
+    cp('src/index.css', target),
+    cp('src/icon.png', target)
+  ])
 }
 
 main()
