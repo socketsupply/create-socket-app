@@ -2,6 +2,7 @@
 html {
   box-sizing: border-box;
   font-size: 16px;
+  font: -apple-system-body;
 }
 
 *, *:before, *:after {
@@ -26,14 +27,14 @@ img {
 /* Placeholder Styles */
 body {
   height: 100vh;
-  font: -apple-system-body;
 }
 
-h1 {
+.centered {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   font: -apple-system-title0;
   font-size: 2.5em;
+  text-align: center;
 }
