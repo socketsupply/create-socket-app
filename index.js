@@ -185,7 +185,7 @@ async function main (argv) {
   process.stdout.write('\nCopying project boilerplate...')
 
   const dirsToCopy = [
-    'assets',
+    'common',
     `templates/${templateName}`
   ]
 
