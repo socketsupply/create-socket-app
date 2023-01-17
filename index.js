@@ -1,77 +1,49 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 import util from 'util'
 import path from 'path'
 import { exec as ecp } from 'child_process'
 
 const exec = util.promisify(ecp)
 const __dirname = new URL(path.dirname(import.meta.url)).pathname
+const DEFAULT_TEMPLATE = 'vanilla'
 
-const cp = async (a, b) => fs.promises.cp(
+const cp = async (a, b) => fs.cp(
   path.resolve(a),
   path.join(b, path.basename(a)),
   { recursive: true, force: true }
 )
 
 async function help (templateNames) {
-  console.log(`usage: create-socket-app <${templateNames.join(' | ')}>`)
+  console.log(`usage: create-socket-app [${templateNames.join(' | ')}]`)
 }
 
 async function install () {
 }
 
+const DEFAULT_PACKAGES = [
+  '@socketsupply/socket-api',
+  'esbuild'
+]
+
 const templates = {}
 
-templates.vanilla = async () => {
-  const src = path.join(__dirname, 'templates', 'vanilla')
-  const buildScript = path.join(src, 'build.js')
-
-  await cp(buildScript, process.cwd())
-  await cp(path.join(src, 'index.js'), path.join(process.cwd(), 'src'))
-  await cp(path.join(src, 'index.html'), path.join(process.cwd(), 'src'))
-  await cp(path.join(src, 'index.css'), path.join(process.cwd(), 'src'))
-  await cp(path.join(src, 'icon.png'), path.join(process.cwd(), 'src'))
-}
-
-templates.tonic = async () => {
-  process.stdout.write('\nInstalling Tonic Framework...')
-
-  const packages = [
-    '@socketsupply/components',
-    '@socketsupply/tonic'
-  ]
-
-  //
-  // Install an opinionated base of modules for building a simple app.
-  //
-  try {
-    await exec(`npm install ${packages.join(' ')}`)
-  } catch (err) {
-    process.stdout.write(`\nUnable to run npm install: ${err.message}\n`)
-    process.exit(1)
-  }
-
-  const src = path.join(__dirname, 'templates', 'tonic')
-  const buildScript = path.join(src, 'build.js')
-
-  await cp(buildScript, process.cwd())
-  await cp(path.join(src, 'index.js'), path.join(process.cwd(), 'src'))
-  await cp(path.join(src, 'index.html'), path.join(process.cwd(), 'src'))
-  await cp(path.join(src, 'index.css'), path.join(process.cwd(), 'src'))
-  await cp(path.join(src, 'icon.png'), path.join(process.cwd(), 'src'))
-  process.stdout.write('OK')
+templates.tonic = {
+  packages: ['@socketsupply/components', '@socketsupply/tonic']
 }
 
 async function main (argv) {
-  const templateNames = await fs.promises.readdir(path.join(__dirname, 'templates'))
+  const templateName = argv[0] || DEFAULT_TEMPLATE
 
-  if (!argv.length || argv.find(s => s.includes('-h'))) {
+  const templateNames = await fs.readdir(path.join(__dirname, 'templates'))
+
+  if (argv.find(s => s.includes('-h'))) {
     return help(templateNames)
   }
 
-  if (argv[0] && templateNames.findIndex(s => s === argv[0]) === -1) {
-    console.error(`Unable to find template "${argv[0]}"`)
+  if (templateName && templateNames.findIndex(s => s === templateName) === -1) {
+    console.error(`Unable to find template "${templateName}"`)
     return help(templateNames)
   }
 
@@ -108,7 +80,7 @@ async function main (argv) {
   ]
 
   try {
-    const entries = (await fs.promises.readdir(process.cwd()))
+    const entries = (await fs.readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
     if (entries.length) {
@@ -116,7 +88,7 @@ async function main (argv) {
       process.exit(1)
     }
   } catch (err) {
-    process.stdout.write(`\nUnable to read the current directory: ${err.message}\n`)
+    process.stderr.write(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
 
@@ -127,7 +99,7 @@ async function main (argv) {
     process.stdout.write('\nCreating socket files...')
     await exec('ssc init')
   } catch (err) {
-    process.stdout.write(`\nUnable to create socket files: ${err.message}\n`)
+    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
   }
   process.stdout.write('OK')
 
@@ -138,35 +110,36 @@ async function main (argv) {
     process.stdout.write('\nInitializing npm package...')
     await exec('npm init -y')
   } catch (err) {
-    process.stdout.write(`\nUnable to run npm init: ${err.message}\n`)
+    process.stderr.write(`\nUnable to run npm init: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
   process.stdout.write('OK')
-
-  const packages = [
-    '@socketsupply/socket-api',
-    'esbuild'
-  ]
 
   //
   // Install an opinionated base of modules for building a simple app.
   //
-  try {
-    process.stdout.write('\nInstalling dependencies...')
-    await exec(`npm install ${packages.join(' ')}`)
-  } catch (err) {
-    process.stdout.write(`\nUnable to run npm install: ${err.message}\n`)
-    process.exit(1)
+  const packages = [
+    ...DEFAULT_PACKAGES,
+    ...templates[templateName]?.packages ?? []
+  ]
+  if (packages.length > 0) {
+    try {
+      process.stdout.write('\nInstalling dependencies...')
+      await exec(`npm install ${packages.join(' ')}`)
+    } catch (err) {
+      process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
+      process.exit(1)
+    }
   }
   process.stdout.write('OK')
-
+  
   process.stdout.write('\nAdding package scripts...')
   let pkg
 
   try {
-    pkg = JSON.parse(await fs.promises.readFile('package.json'))
+    pkg = JSON.parse(await fs.readFile('package.json'))
   } catch (err) {
-    process.stdout.write(`\nUnable to read package.json: ${err.message}\n`)
+    process.stderr.write(`\nUnable to read package.json: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
 
@@ -174,9 +147,9 @@ async function main (argv) {
   pkg.scripts.start = 'ssc build -r'
 
   try {
-    fs.promises.writeFile('package.json', JSON.stringify(pkg, 2, 2))
+    fs.writeFile('package.json', JSON.stringify(pkg, 2, 2))
   } catch (err) {
-    process.stdout.write(`\nUnable to write package.json: ${err.message}\n`)
+    process.stderr.write(`\nUnable to write package.json: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
 
@@ -186,9 +159,9 @@ async function main (argv) {
   process.stdout.write('\nUpdating project configuration...')
 
   try {
-    config = await fs.promises.readFile('socket.ini', 'utf8')
+    config = await fs.readFile('socket.ini', 'utf8')
   } catch (err) {
-    process.stdout.write(`\nUnable to read socket.ini: ${err.message}\n`)
+    process.stderr.write(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
 
@@ -202,23 +175,35 @@ async function main (argv) {
     .replace(oldName, newName)
 
   try {
-    await fs.promises.writeFile('socket.ini', config)
+    await fs.writeFile('socket.ini', config)
   } catch (err) {
-    process.stdout.write(`\nUnable to write socket.ini: ${err.message}\n`)
+    process.stderr.write(`\nUnable to write socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-
   process.stdout.write('OK')
+  
   process.stdout.write('\nCopying project boilerplate...')
 
+  const dirsToCopy = [
+    'assets',
+    `templates/${templateName}`
+  ]
+
+  let filesToCopy
   try {
-    await templates[argv[0]]()
+    const filesInGroups = await Promise.all(dirsToCopy.map(dir => fs.readdir(path.join(__dirname, dir))))
+    filesToCopy = filesInGroups.map((group, i) => group.map(file => path.join(__dirname, dirsToCopy[i], file))).flat()
   } catch (err) {
-    process.stdout.write(`\nUnable to copy build.js: ${err.message}\n`)
-    process.exit(1)
+    process.stderr.write(`\nUnable to read template files: ${err.stack ?? err.message}\n`)
   }
 
-  process.stdout.write('OK\n')
+  try {
+    await Promise.all(filesToCopy.map(dir => cp(dir, process.cwd())))
+  } catch (err) {
+    process.stderr.write(`\nUnable to copy files: ${err.stack ?? err.message}\n`)
+    process.exit(1)
+  }
+  process.stdout.write('OK')
 
   process.stdout.write('\nType \'ssc build -r\' to build and run the app\n')
 }
