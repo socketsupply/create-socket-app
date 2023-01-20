@@ -45,10 +45,14 @@ async function main () {
   if (!watch) {
     await esbuild.build({
       ...params,
-      outdir: target,
-      minifyWhitespace: false,
-      minifyIdentifiers: true,
-      minifySyntax: true
+      outdir: target
+    })
+  }
+  if (process.argv.find(s => s.includes('--test'))) {
+    await esbuild.build({
+      ...params,
+      entryPoints: ['test/index.js'],
+      outdir: path.join(target, 'test')
     })
   }
 

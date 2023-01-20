@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises'
-import util from 'util'
-import path from 'path'
-import { exec as ecp } from 'child_process'
+import util from 'node:util'
+import path from 'node:path'
+import { exec as ecp } from 'node:child_process'
 
 const exec = util.promisify(ecp)
 const __dirname = new URL(path.dirname(import.meta.url)).pathname
@@ -24,6 +24,8 @@ async function install () {
 
 const DEFAULT_PACKAGES = [
   '@socketsupply/socket-api',
+  '@socketsupply/tapzero',
+  '@socketsupply/test-dom',
   'esbuild'
 ]
 
@@ -144,7 +146,9 @@ async function main (argv) {
   }
 
   pkg.type = 'module'
-  pkg.scripts.start = 'ssc build -r'
+  pkg.scripts.start = 'ssc build -r -o'
+  pkg.scripts.build = 'ssc build'
+  pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
 
   try {
     fs.writeFile('package.json', JSON.stringify(pkg, 2, 2))
