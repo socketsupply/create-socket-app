@@ -8,10 +8,10 @@ if (process.env.DEBUG) {
 
 class AppContainer extends Tonic {
   render () {
-    const paltform = os.platform()
+    const platform = os.platform()
 
     return this.html`
-      <h1>Hello, ${paltform}!</h1>
+      <h1>Hello, ${platform}!</h1>
     `
   }
 }

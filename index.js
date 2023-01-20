@@ -34,6 +34,9 @@ const templates = {}
 templates.tonic = {
   packages: ['@socketsupply/tonic']
 }
+templates.react = {
+  packages: ['react', 'react-dom']
+}
 
 async function main (argv) {
   const templateName = argv[0] || DEFAULT_TEMPLATE
