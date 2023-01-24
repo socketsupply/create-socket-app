@@ -25,17 +25,16 @@ async function install () {
 const DEFAULT_PACKAGES = [
   '@socketsupply/socket-api',
   '@socketsupply/tapzero',
-  '@socketsupply/test-dom',
-  'esbuild'
+  '@socketsupply/test-dom'
 ]
 
 const templates = {}
 
 templates.tonic = {
-  packages: ['@socketsupply/tonic']
+  packages: ['@socketsupply/tonic', 'esbuild']
 }
 templates.react = {
-  packages: ['react', 'react-dom']
+  packages: ['react', 'react-dom', 'esbuild']
 }
 
 async function main (argv) {
@@ -212,7 +211,7 @@ async function main (argv) {
   }
   process.stdout.write('OK')
 
-  process.stdout.write('\nType \'ssc build -r\' to build and run the app\n')
+  process.stdout.write('\n\nType \'npm start\' to launch the app\n')
 }
 
 main(process.argv.slice(2))
