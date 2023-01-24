@@ -21,8 +21,7 @@ async function main () {
     format: 'esm',
     bundle: true,
     minify: !!prod,
-    sourcemap: !prod,
-    keepNames: true
+    sourcemap: !prod
   }
 
   const watch = process.argv.find(s => s.includes('--watch='))
@@ -46,10 +45,14 @@ async function main () {
   if (!watch) {
     await esbuild.build({
       ...params,
-      outdir: target,
-      minifyWhitespace: false,
-      minifyIdentifiers: true,
-      minifySyntax: true
+      outdir: target
+    })
+  }
+  if (process.argv.find(s => s.includes('--test'))) {
+    await esbuild.build({
+      ...params,
+      entryPoints: ['test/index.js'],
+      outdir: path.join(target, 'test')
     })
   }
 
@@ -66,9 +69,11 @@ async function main () {
   //
   // Copy some files into the new project
   //
-  await cp('src/index.html', target)
-  await cp('src/index.css', target)
-  await cp('src/icon.png', target)
+  await Promise.all([
+    cp('src/index.html', target),
+    cp('src/index.css', target),
+    cp('src/icon.png', target)
+  ])
 }
 
 main()

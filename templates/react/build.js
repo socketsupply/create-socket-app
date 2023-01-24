@@ -17,7 +17,7 @@ async function main () {
   const prod = process.argv.find(s => s.includes('--prod'))
 
   const params = {
-    entryPoints: ['src/index.js'],
+    entryPoints: ['src/index.jsx'],
     format: 'esm',
     bundle: true,
     minify: !!prod,
