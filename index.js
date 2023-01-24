@@ -30,6 +30,9 @@ const DEFAULT_PACKAGES = [
 
 const templates = {}
 
+templates.vanilla = {
+  packages: ['esbuild']
+}
 templates.tonic = {
   packages: ['@socketsupply/tonic', 'esbuild']
 }
