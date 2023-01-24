@@ -9,7 +9,7 @@ usage: create-socket-app [react | svelt | tonic | vanilla | vue]
 ```
 
 ```bash
-$npx init socket-app vanilla
+$npx create-socket-app
 
 Creating socket files...OK
 Initializing npm package...OK
