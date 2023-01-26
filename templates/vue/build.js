@@ -2,27 +2,13 @@
 // This is an example build script for Socket Runtime
 // When you run 'ssc build', this script (node build.js) will be run
 //
-import fs from 'node:fs'
 import path from 'node:path'
-
-import esbuild from 'esbuild'
-
-const cp = async (a, b) => fs.promises.cp(
-  path.resolve(a),
-  path.join(b, path.basename(a)),
-  { recursive: true, force: true }
-)
+import fs from 'node:fs'
+import { build } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
 async function main () {
   const prod = process.argv.find(s => s.includes('--prod'))
-
-  const params = {
-    entryPoints: ['src/index.jsx'],
-    format: 'esm',
-    bundle: true,
-    minify: !!prod,
-    sourcemap: !prod
-  }
 
   const watch = process.argv.find(s => s.includes('--watch='))
 
@@ -35,26 +21,32 @@ async function main () {
   //
   // If the watch command is specified, let esbuild start its server
   //
-  if (watch) {
-    esbuild.serve({ servedir: path.resolve(watch.split('=')[1]) }, params)
-  }
+  // TODO: Implement watch mode
 
   //
   //
   //
   if (!watch) {
-    await esbuild.build({
-      ...params,
-      outdir: target
+    await build({
+      root: path.resolve('./src'),
+      mode: prod ? 'production' : 'development',
+      base: './',
+      plugins: [vue()],
+      build: {
+        outDir: target,
+        emptyOutDir: false,
+        sourcemap: !prod,
+        minify: !!prod ? 'esbuild' : false,
+        // modulePreload: {
+        //   polyfill: false
+        // },
+      },
     })
   }
-  if (process.argv.find(s => s.includes('--test'))) {
-    await esbuild.build({
-      ...params,
-      entryPoints: ['test/index.js'],
-      outdir: path.join(target, 'test')
-    })
-  }
+  // TODO: Implement test mode
+  // if (process.argv.find(s => s.includes('--test'))) {
+  //   ...
+  // }
 
   //
   // Not writing a package json to your project could be a security risk
@@ -65,15 +57,6 @@ async function main () {
     console.log('Did not receive the build target path as an argument!')
     process.exit(1)
   }
-
-  //
-  // Copy some files into the new project
-  //
-  await Promise.all([
-    cp('src/index.html', target),
-    cp('src/index.css', target),
-    cp('src/icon.png', target)
-  ])
 }
 
 main()

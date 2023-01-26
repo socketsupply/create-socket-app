@@ -2,8 +2,8 @@
 // This is an example build script for Socket Runtime
 // When you run 'ssc build', this script (node build.js) will be run
 //
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import esbuild from 'esbuild'
 
