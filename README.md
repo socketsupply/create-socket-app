@@ -5,7 +5,7 @@ production quality app as quickly as possible.
 ```bash
 $npx create-socket-app -h
 
-usage: create-socket-app [react | svelt | tonic | vanilla | vue]
+usage: create-socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
 ```bash
