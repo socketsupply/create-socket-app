@@ -48,6 +48,10 @@ templates.vue = {
   deps: ['vue'], 
   devDeps: ['vite','@vitejs/plugin-vue']
 }
+templates.svelte = {
+  deps: ['svelte'],
+  devDeps: ['vite','@sveltejs/vite-plugin-svelte']
+}
 
 async function main (argv) {
   const templateName = argv[0] ?? DEFAULT_TEMPLATE
