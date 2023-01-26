@@ -22,8 +22,11 @@ async function help (templateNames) {
 async function install () {
 }
 
-const DEFAULT_PACKAGES = [
-  '@socketsupply/socket-api',
+const DEFAULT_DEPS = [
+  '@socketsupply/socket-api'
+]
+
+const DEFAULT_DEV_DEPS = [
   '@socketsupply/tapzero',
   '@socketsupply/test-dom'
 ]
@@ -31,20 +34,23 @@ const DEFAULT_PACKAGES = [
 const templates = {}
 
 templates.vanilla = {
-  packages: ['esbuild']
+  devDeps: ['esbuild']
 }
 templates.tonic = {
-  packages: ['@socketsupply/tonic', 'esbuild']
+  deps: ['@socketsupply/tonic'], 
+  devDeps: ['esbuild']
 }
 templates.react = {
-  packages: ['react', 'react-dom', 'esbuild']
+  deps: ['react', 'react-dom'],
+  devDeps: ['esbuild']
 }
 templates.vue = {
-  packages: ['vue', 'vite', '@vitejs/plugin-vue']
+  deps: ['vue'], 
+  devDeps: ['vite','@vitejs/plugin-vue']
 }
 
 async function main (argv) {
-  const templateName = argv[0] || DEFAULT_TEMPLATE
+  const templateName = argv[0] ?? DEFAULT_TEMPLATE
 
   const templateNames = await fs.readdir(path.join(__dirname, 'templates'))
 
@@ -128,14 +134,27 @@ async function main (argv) {
   //
   // Install an opinionated base of modules for building a simple app.
   //
-  const packages = [
-    ...DEFAULT_PACKAGES,
-    ...templates[templateName]?.packages ?? []
+  const devDeps = [
+    ...DEFAULT_DEV_DEPS,
+    ...templates[templateName]?.devDeps ?? []
   ]
-  if (packages.length > 0) {
+  if (devDeps.length > 0) {
+    try {
+      process.stdout.write('\nInstalling developer dependencies...')
+      await exec(`npm install -D ${devDeps.join(' ')}`)
+    } catch (err) {
+      process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
+      process.exit(1)
+    }
+  }
+  const deps = [
+    ...DEFAULT_DEPS,
+    ...templates[templateName]?.deps ?? []
+  ]
+  if (deps.length > 0) {
     try {
       process.stdout.write('\nInstalling dependencies...')
-      await exec(`npm install ${packages.join(' ')}`)
+      await exec(`npm install ${deps.join(' ')}`)
     } catch (err) {
       process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
       process.exit(1)
