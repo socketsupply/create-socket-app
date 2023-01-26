@@ -39,6 +39,9 @@ templates.tonic = {
 templates.react = {
   packages: ['react', 'react-dom', 'esbuild']
 }
+templates.vue = {
+  packages: ['vue', 'vite', '@vitejs/plugin-vue']
+}
 
 async function main (argv) {
   const templateName = argv[0] || DEFAULT_TEMPLATE
