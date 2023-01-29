@@ -2,25 +2,25 @@ This is similar to React's `Create React App`. The idea is that it provides a
 few basic boilerplates and some stong opinions so you can get coding on a
 production quality app as quickly as possible.
 
-```bash
-$npx create-socket-app -h
+## Usage: 
 
-usage: create-socket-app [react | svelte | tonic | vanilla | vue]
+With npm:
+```bash
+npm create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
+With yarn:
 ```bash
-$npx create-socket-app
+yarn create socket-app [react | svelte | tonic | vanilla | vue]
+```
 
-Creating socket files...OK
-Initializing npm package...OK
-Installing dependencies...OK
-Adding package scripts...OK
-Updating project configuration...OK
-Copying project boilerplate...OK
+With pnpm:
+```bash
+pnpm create socket-app [react | svelte | tonic | vanilla | vue]
+```
 
-Type 'npm start' to launch the app
-
-$tree
+Now you should have a directory structure like this:
+```bash
 .
 ├── README.md
 ├── build.js

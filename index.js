@@ -16,7 +16,7 @@ const cp = async (a, b) => fs.cp(
 )
 
 async function help (templateNames) {
-  console.log(`usage: create-socket-app [${templateNames.join(' | ')}]`)
+  console.log(`usage: npm create socket-app [${templateNames.join(' | ')}]`)
 }
 
 async function install () {
