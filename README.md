@@ -6,17 +6,17 @@ production quality app as quickly as possible.
 
 With npm:
 ```bash
-npm create socket-app
+npm create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
 With yarn:
 ```bash
-yarn create socket-app
+yarn create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
 With pnpm:
 ```bash
-pnpm create socket-app
+pnpm create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
 Now you should have a directory structure like this:
