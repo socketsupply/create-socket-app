@@ -1,6 +1,6 @@
 {
   "name": "create-socket-app",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Create Socket App",
   "bin": {
     "create-socket-app": "./index.js"
