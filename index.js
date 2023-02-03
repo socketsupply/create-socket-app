@@ -23,7 +23,6 @@ async function install () {
 }
 
 const DEFAULT_DEPS = [
-  '@socketsupply/socket'
 ]
 
 const DEFAULT_DEV_DEPS = [
@@ -175,6 +174,7 @@ async function main (argv) {
   }
 
   pkg.type = 'module'
+  pkg.scripts.postinstall = 'ssc -v >/dev/null 2>&1 || npm i @socketsupply/socket'
   pkg.scripts.start = 'ssc build -r -o'
   pkg.scripts.build = 'ssc build'
   pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
