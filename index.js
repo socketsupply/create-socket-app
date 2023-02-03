@@ -23,12 +23,10 @@ async function install () {
 }
 
 const DEFAULT_DEPS = [
-  '@socketsupply/socket-api'
+  '@socketsupply/socket'
 ]
 
 const DEFAULT_DEV_DEPS = [
-  '@socketsupply/tapzero',
-  '@socketsupply/test-dom'
 ]
 
 const templates = {}
@@ -37,7 +35,7 @@ templates.vanilla = {
   devDeps: ['esbuild']
 }
 templates.tonic = {
-  deps: ['@socketsupply/tonic'], 
+  deps: ['@socketsupply/tonic'],
   devDeps: ['esbuild']
 }
 templates.react = {
@@ -45,7 +43,7 @@ templates.react = {
   devDeps: ['esbuild']
 }
 templates.vue = {
-  deps: ['vue'], 
+  deps: ['vue'],
   devDeps: ['vite','@vitejs/plugin-vue']
 }
 templates.svelte = {
@@ -113,17 +111,6 @@ async function main (argv) {
   }
 
   //
-  // Initialize the current directory as a socket app.
-  //
-  try {
-    process.stdout.write('\nCreating socket files...')
-    await exec('ssc init')
-  } catch (err) {
-    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
-  }
-  process.stdout.write('OK')
-
-  //
   // Create a package.json that has the module and a basic build setup.
   //
   try {
@@ -165,7 +152,18 @@ async function main (argv) {
     }
   }
   process.stdout.write('OK')
-  
+
+  //
+  // Initialize the current directory as a socket app.
+  //
+  try {
+    process.stdout.write('\nCreating socket files...')
+    await exec('npx @socketsupply/socket init')
+  } catch (err) {
+    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
+  }
+  process.stdout.write('OK')
+
   process.stdout.write('\nAdding package scripts...')
   let pkg
 
@@ -200,8 +198,8 @@ async function main (argv) {
     process.exit(1)
   }
 
-  const oldCommand = '; build = "node build-script.js"'
-  const newCommand = 'build = "node build.js"'
+  const oldCommand = '; script = "node build-script.js"'
+  const newCommand = 'script = "node build.js"'
   const oldName = 'name = "beepboop"'
   const newName = `name = "${pkg.name}"`
 
@@ -216,7 +214,7 @@ async function main (argv) {
     process.exit(1)
   }
   process.stdout.write('OK')
-  
+
   process.stdout.write('\nCopying project boilerplate...')
 
   const dirsToCopy = [
