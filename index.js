@@ -152,17 +152,6 @@ async function main (argv) {
   }
   process.stdout.write('OK')
 
-  //
-  // Initialize the current directory as a socket app.
-  //
-  try {
-    process.stdout.write('\nCreating socket files...')
-    await exec('npx @socketsupply/socket init')
-  } catch (err) {
-    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
-  }
-  process.stdout.write('OK')
-
   process.stdout.write('\nAdding package scripts...')
   let pkg
 
@@ -175,6 +164,7 @@ async function main (argv) {
 
   pkg.type = 'module'
   pkg.scripts.postinstall = 'ssc -v >/dev/null 2>&1 || npm i @socketsupply/socket'
+  pkg.scripts['init-project'] = 'ssc init'
   pkg.scripts.start = 'ssc build -r -o'
   pkg.scripts.build = 'ssc build'
   pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
@@ -186,6 +176,17 @@ async function main (argv) {
     process.exit(1)
   }
 
+  process.stdout.write('OK')
+
+  //
+  // Initialize the current directory as a socket app.
+  //
+  try {
+    process.stdout.write('\nCreating socket files...')
+    await exec('npm run init-project')
+  } catch (err) {
+    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
+  }
   process.stdout.write('OK')
 
   let config
