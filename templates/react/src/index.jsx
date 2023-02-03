@@ -1,6 +1,7 @@
-import process from '@socketsupply/socket-api/process'
-import os from '@socketsupply/socket-api/os'
-import { createRoot } from 'react-dom/client' 
+import process from 'socket:process'
+import os from 'socket:os'
+
+import { createRoot } from 'react-dom/client'
 import React from 'react'
 
 if (process.env.DEBUG) {

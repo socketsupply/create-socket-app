@@ -1,5 +1,5 @@
-import process from '@socketsupply/socket-api/process'
-import os from '@socketsupply/socket-api/os'
+import process from 'socket:process'
+import os from 'socket:os'
 
 if (process.env.DEBUG) {
   console.log('started in debug mode')

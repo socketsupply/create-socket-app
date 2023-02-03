@@ -1,9 +1,11 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
+import os from 'socket:os'
+const toProperCase = s => s[0].toUpperCase() + s.slice(1)
 </script>
 
 <template>
-  <HelloWorld msg="Vite + Vue" />
+  <HelloWorld :msg="`Vite + Vue (on ${toProperCase(os.platform())})`" />
 </template>
 
 <style scoped>

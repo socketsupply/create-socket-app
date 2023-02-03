@@ -21,7 +21,8 @@ async function main () {
     format: 'esm',
     bundle: true,
     minify: !!prod,
-    sourcemap: !prod
+    sourcemap: !prod,
+    external: ['socket:*']
   }
 
   const watch = process.argv.find(s => s.includes('--watch='))

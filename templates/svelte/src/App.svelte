@@ -1,13 +1,16 @@
 <script>
   import svelteLogo from './assets/svelte.svg'
   import Counter from './lib/Counter.svelte'
+  import os from 'socket:os'
+
+  const toProperCase = s => s[0].toUpperCase() + s.slice(1)
 </script>
 
 <main>
   <div>
     <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
   </div>
-  <h1>Vite + Svelte</h1>
+  <h1>Vite + Svelte (on {toProperCase(os.platform())})</h1>
 
   <div class="card">
     <Counter />

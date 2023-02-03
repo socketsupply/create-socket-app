@@ -21,7 +21,8 @@ async function main () {
     format: 'esm',
     bundle: true,
     minify: !!prod,
-    sourcemap: !prod
+    sourcemap: !prod,
+    external: ['socket:*']
   }
 
   const watch = process.argv.find(s => s.includes('--watch='))
@@ -45,7 +46,7 @@ async function main () {
   if (!watch) {
     await esbuild.build({
       ...params,
-      outdir: target
+      outfile: path.join(target, 'index.js')
     })
   }
   if (process.argv.find(s => s.includes('--test'))) {
@@ -59,7 +60,7 @@ async function main () {
   //
   // Not writing a package json to your project could be a security risk
   //
-  await fs.promises.writeFile(path.join(target, 'package.json'), '{ "private": true }')
+  await fs.promises.writeFile(path.join(target, 'package.json'), '{ "type": "module", private": true }')
 
   if (!target) {
     console.log('Did not receive the build target path as an argument!')

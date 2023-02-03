@@ -37,6 +37,9 @@ async function main () {
         emptyOutDir: false,
         sourcemap: !prod,
         minify: !!prod ? 'esbuild' : false,
+        rollupOptions: {
+          external: [/socket:.*/],
+        },
         // modulePreload: {
         //   polyfill: false
         // },
