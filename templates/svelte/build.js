@@ -16,7 +16,7 @@ async function main () {
   // The second argument to this program will be the target-OS specifc
   // directory for where to copy your build artifacts
   //
-  const target = path.resolve(process.argv[2])
+    const target = path.resolve(process.argv[2])
 
   //
   // If the watch command is specified, let esbuild start its server
@@ -37,6 +37,9 @@ async function main () {
         emptyOutDir: false,
         sourcemap: !prod,
         minify: !!prod ? 'esbuild' : false,
+        rollupOptions: {
+          external: [/socket:.*/],
+        },
         // modulePreload: {
         //   polyfill: false
         // },
@@ -51,7 +54,7 @@ async function main () {
   //
   // Not writing a package json to your project could be a security risk
   //
-  await fs.promises.writeFile(path.join(target, 'package.json'), '{ "private": true }')
+  await fs.promises.writeFile(path.join(target, 'package.json'), '{ "type": "module", private": true }')
 
   if (!target) {
     console.log('Did not receive the build target path as an argument!')

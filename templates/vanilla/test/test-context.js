@@ -1,10 +1,10 @@
-import { GLOBAL_TEST_RUNNER } from '@socketsupply/tapzero'
-import console from '@socketsupply/socket-api/console.js'
-import process from '@socketsupply/socket-api/process.js'
-import '@socketsupply/socket-api/runtime.js'
+import { GLOBAL_TEST_RUNNER } from 'socket:test'
+import console from 'socket:console'
+import process from 'socket:process'
+import 'socket:runtime'
 
 // uncomment below to get IPC debug output in stdout
-// import ipc from '@socketsupply/socket-api/ipc.js'
+// import ipc from 'socket:ipc.js'
 // ipc.debug.enabled = true
 // ipc.debug.log = (...args) => console.log(...args)
 

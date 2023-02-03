@@ -1,6 +1,7 @@
-import process from '@socketsupply/socket-api/process'
-import os from '@socketsupply/socket-api/os'
 import Tonic from '@socketsupply/tonic'
+
+import process from 'socket:process'
+import os from 'socket:os'
 
 if (process.env.DEBUG) {
   console.log('started in debug mode')
@@ -16,6 +17,4 @@ class AppContainer extends Tonic {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  Tonic.add(AppContainer, 'app-container')
-})
+Tonic.add(AppContainer, 'app-container')
