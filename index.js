@@ -113,10 +113,10 @@ async function main (argv) {
   // Create a package.json that has the module and a basic build setup.
   //
   try {
-    process.stdout.write('\nInitializing npm package...')
+    process.stdout.write('Initializing npm package...')
     await exec('npm init -y')
   } catch (err) {
-    process.stderr.write(`\nUnable to run npm init: ${err.stack ?? err.message}\n`)
+    process.stderr.write(`Unable to run npm init: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
   process.stdout.write('OK')
@@ -128,6 +128,7 @@ async function main (argv) {
     ...DEFAULT_DEV_DEPS,
     ...templates[templateName]?.devDeps ?? []
   ]
+
   if (devDeps.length > 0) {
     try {
       process.stdout.write('\nInstalling developer dependencies...')
@@ -136,19 +137,28 @@ async function main (argv) {
       process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
       process.exit(1)
     }
+
+    process.stdout.write('OK')
   }
+
   const deps = [
     ...DEFAULT_DEPS,
     ...templates[templateName]?.deps ?? []
   ]
-  if (deps.length > 0) {
-    try {
-      process.stdout.write('\nInstalling dependencies...')
-      await exec(`npm install ${deps.join(' ')}`)
-    } catch (err) {
-      process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
-      process.exit(1)
-    }
+
+  try {
+    await exec(`ssc --version`)
+  } catch (err) {
+    process.stdout.write('\nInstalling \'@socketsupply/socket\' locally (ssc not in PATH)')
+    deps.push('@socketsupply/socket')
+  }
+
+  try {
+    process.stdout.write('\nInstalling dependencies...')
+    await exec(`npm install ${deps.join(' ')} --save`)
+  } catch (err) {
+    process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
+    process.exit(1)
   }
   process.stdout.write('OK')
 
@@ -163,10 +173,9 @@ async function main (argv) {
   }
 
   pkg.type = 'module'
-  pkg.scripts.postinstall = 'ssc -v >/dev/null 2>&1 || npm i @socketsupply/socket'
   pkg.scripts['init-project'] = 'ssc init'
   pkg.scripts.start = 'ssc build -r -o'
-  pkg.scripts.build = 'ssc build'
+  pkg.scripts.build = 'ssc build -o'
   pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
 
   try {
