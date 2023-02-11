@@ -4,9 +4,10 @@ import fs from 'node:fs/promises'
 import util from 'node:util'
 import path from 'node:path'
 import { exec as ecp } from 'node:child_process'
+import os from 'node:os'
 
 const exec = util.promisify(ecp)
-const __dirname = new URL(path.dirname(import.meta.url)).pathname
+const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '');
 const DEFAULT_TEMPLATE = 'vanilla'
 
 const cp = async (a, b) => fs.cp(
