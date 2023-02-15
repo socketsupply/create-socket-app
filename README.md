@@ -61,3 +61,10 @@ Now inside of your directory,you should have a `directory structure` like this:
     ├── index.js
     └── test-context.js
 ```
+
+## Contributing 
+
+`Create Socket app` works on macOS, Windows, and linux.
+If something doesn't work, please [create an issue](https://github.com/socketsupply/create-socket-app).
+We'd love to have your helping on `create-socket-app`.
+If you have questions, please join our [Discord](https://discord.com/channels/775715380089716778/1062402105794625707)
