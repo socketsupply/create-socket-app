@@ -26,7 +26,7 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 `Notes` : 
 
-`npx` is a package runner tool that comes with `npm 5.2` and above - learn more here(https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner#:~:text=npx%20is%20a%20tool%20intended%20to%20help%20round,tools%20and%20other%20executables%20hosted%20on%20the%20registry.)
+`npx` is a package runner tool that comes with `npm 5.2` and above - [learn more here](https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner#:~:text=npx%20is%20a%20tool%20intended%20to%20help%20round,tools%20and%20other%20executables%20hosted%20on%20the%20registry.)
 
 `Templates`:you can start a new app from a template by appending `[template-name]` to the creation command.
 
