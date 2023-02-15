@@ -24,9 +24,7 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 ```
 
-https://user-images.githubusercontent.com/79177582/219162686-649bbdb9-015a-41bd-a613-af665a5a199e.mov
-
-
+https://user-images.githubusercontent.com/79177582/219162686-649bbdb9-015a-41bd-a613-af665a5a199e.mov  
 
 
 `Notes` : 
@@ -69,7 +67,10 @@ Now inside of your directory,you should have a `directory structure` like this:
 
 ## Contributing 
 
-`Create Socket app` works on macOS, Windows, and linux.
-If something doesn't work, please [create an issue](https://github.com/socketsupply/create-socket-app).
-We'd love to have your helping on `create-socket-app`.
+`Create Socket app` works on macOS, Windows, and linux.  
+
+If something doesn't work, please [create an issue](https://github.com/socketsupply/create-socket-app).  
+
+We'd love to have your helping on `create-socket-app`.  
+
 If you have questions, please join our [Discord](https://discord.com/invite/YPV32gKCsH)
