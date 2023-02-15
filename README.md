@@ -1,13 +1,36 @@
-This is similar to React's `Create React App`. The idea is to provides a
+
+# Create Socket App 
+
+`Create Socket App` is similar to React's `Create React App`. The idea is to provides a
 few basic boilerplates and some strong opinions so you can get coding on a
 production quality app as quickly as possible.
 
-## Usage: 
+## Getting Started 
+
+Before getting started, you may need some `Prerequisites`, to learn more you can check
+[Socket Runtime](https://sockets.sh/).
+**You'll also need to have Node>= 16 on your local developement machine.**
+That's it, you are ready to go!
+
+To create a new app, you may choose one of the following methods: 
 
 With npm:
+
+Any of these following commands will work
 ```bash
+npx create socket-app [react | svelte | tonic | vanilla | vue]
+npm init socket-app [react | svelte | tonic | vanilla | vue]
 npm create socket-app [react | svelte | tonic | vanilla | vue]
+
 ```
+
+`Notes` : 
+
+`npx` is a package runner tool that comes with `npm 5.2` and above - learn more here(https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner#:~:text=npx%20is%20a%20tool%20intended%20to%20help%20round,tools%20and%20other%20executables%20hosted%20on%20the%20registry.)
+
+`Templates`:you can start a new app from a template by appending `[template-name]` to the creation command.
+
+<!-- I was thinking ,it will be nice to add a video tutorial or screenshoots for each command and option. -->
 
 With yarn:
 ```bash
