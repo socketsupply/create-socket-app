@@ -14,7 +14,7 @@ That's it, you are ready to go!
 
 To create a new app, you may choose one of the following methods: 
 
-With npm:
+With **npm**:
 
 Any of these following commands will work
 ```bash
@@ -32,17 +32,20 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 <!-- I was thinking ,it will be nice to add a video tutorial or screenshoots for each command and option. -->
 
-With yarn:
+With **yarn**:
 ```bash
 yarn create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
-With pnpm:
+With **pnpm**:
 ```bash
 pnpm create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
-Now you should have a directory structure like this:
+## Output:
+
+Now inside of your directory,you should have a `directory structure` like this:
+
 ```bash
 .
 ├── README.md
