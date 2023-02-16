@@ -18,21 +18,19 @@ With **npm**:
 
 Any of these following commands will work
 ```bash
-npx create socket-app [react | svelte | tonic | vanilla | vue]
 npm init socket-app [react | svelte | tonic | vanilla | vue]
 npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 ```
 
+`Notes`  
+
+`Templates` you can start a new app from a template by appending `[template-name]` to the creation commands above.
+
 https://user-images.githubusercontent.com/79177582/219162686-649bbdb9-015a-41bd-a613-af665a5a199e.mov  
 
-`Notes` : 
 
-`npx` is a package runner tool that comes with `npm 5.2` and above - [learn more here](https://blog.npmjs.org/post/162869356040/introducing-npx-an-npm-package-runner#:~:text=npx%20is%20a%20tool%20intended%20to%20help%20round,tools%20and%20other%20executables%20hosted%20on%20the%20registry.)
-
-`Templates`you can start a new app from a template by appending `[template-name]` to the creation commands above.
-
-<!-- I was thinking ,it will be nice to add a video tutorial or screenshoots for each command and option. -->
+<!-- This is a draft video, I liked how they have a video tutorial in the `react` website. -->
 
 With **yarn**:
 ```bash
