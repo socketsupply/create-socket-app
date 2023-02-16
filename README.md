@@ -7,14 +7,13 @@ production quality app as quickly as possible.
 
 ## Getting Started 
 
-Before getting started, you may need some `Prerequisites`, to learn more you can check
-[Socket Runtime](https://sockets.sh/).
-**You'll also need to have Node>= 16 on your local developement machine.**
-That's it, you are ready to go!
+**You’ll need to have Node 16.0.0 or later version on your local development machine .**  
 
-To create a new app, you may choose one of the following methods: 
+Creat an empty directory and that's it, you are ready to go!
 
-With **npm**:
+You may choose one of the following methods: 
+
+**npm**
 
 Any of these following commands will work
 ```bash
@@ -23,16 +22,16 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 ```
 
-`Notes`  
+`Note`  
 
 You can start a new app from a template by choosing `[template-name]` in the creation commands above.  
   
-With **yarn**:
+**yarn**
 ```bash
 yarn create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
-With **pnpm**:
+**pnpm**
 ```bash
 pnpm create socket-app [react | svelte | tonic | vanilla | vue]
 ```  
@@ -66,6 +65,9 @@ Now inside of your directory,you should have a `directory structure` like this:
     ├── index.js
     └── test-context.js
 ```
+## User Guide
+
+You can find more details, instructions, and many useful tips in [Our documentation](https://sockets.sh/).
 
 ## Contributing 
 
