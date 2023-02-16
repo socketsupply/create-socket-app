@@ -25,7 +25,7 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 `Notes`  
 
-`Templates` you can start a new app from a template by appending `[template-name]` to the creation commands above.  
+You can start a new app from a template by choosing `[template-name]` in the creation commands above.  
   
 With **yarn**:
 ```bash
@@ -73,6 +73,6 @@ Now inside of your directory,you should have a `directory structure` like this:
 
 If something doesn't work, please [create an issue](https://github.com/socketsupply/create-socket-app).  
 
-We'd love to have your helping on `create-socket-app`.  
+We'd love to have your helping on `Create Socket App`.  
 
 If you have questions, please join our [Discord](https://discord.com/invite/YPV32gKCsH)
