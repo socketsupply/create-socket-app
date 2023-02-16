@@ -25,13 +25,8 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 `Notes`  
 
-`Templates` you can start a new app from a template by appending `[template-name]` to the creation commands above.
-
-https://user-images.githubusercontent.com/79177582/219162686-649bbdb9-015a-41bd-a613-af665a5a199e.mov  
-
-
-<!-- This is a draft video, I liked how they have a video tutorial in the `react` website. -->
-
+`Templates` you can start a new app from a template by appending `[template-name]` to the creation commands above.  
+  
 With **yarn**:
 ```bash
 yarn create socket-app [react | svelte | tonic | vanilla | vue]
@@ -40,7 +35,17 @@ yarn create socket-app [react | svelte | tonic | vanilla | vue]
 With **pnpm**:
 ```bash
 pnpm create socket-app [react | svelte | tonic | vanilla | vue]
-```
+```  
+
+## Quick Demonstration Video
+
+
+https://user-images.githubusercontent.com/79177582/219162686-649bbdb9-015a-41bd-a613-af665a5a199e.mov  
+
+
+<!-- This is a draft video, I liked how they have a video tutorial in the `react` website. if it's a good idea I'll make a better one-->
+
+
 
 ## Output:
 
