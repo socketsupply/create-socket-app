@@ -1,9 +1,8 @@
 
 # Create Socket App 
 
-`Create Socket App` is similar to React's `Create React App`. The idea is to provides a
-few basic boilerplates and some strong opinions so you can get coding on a
-production quality app as quickly as possible.
+`Create Socket App` is similar to React's `Create React App`,it will help you build native apps for mobile and desktop with Svelte, Reactjs, Vuejs and others!  
+The idea is to provides a few basic boilerplates and some strong opinions so you can get coding on a production quality app as quickly as possible.
 
 ## Getting Started 
 
