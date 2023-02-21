@@ -12,7 +12,7 @@ Creat an empty directory and that's it, you are ready to go!
 
 You may choose one of the following methods: 
 
-**npm**
+### **npm**
 
 Any of these following commands will work
 ```bash
@@ -21,16 +21,16 @@ npm create socket-app [react | svelte | tonic | vanilla | vue]
 
 ```
 
-`Note`  
+### `Note`  
 
 You can start a new app from a template by choosing `[template-name]` in the creation commands above.  
   
-**yarn**
+### **yarn**
 ```bash
 yarn create socket-app [react | svelte | tonic | vanilla | vue]
 ```
 
-**pnpm**
+### **pnpm**
 ```bash
 pnpm create socket-app [react | svelte | tonic | vanilla | vue]
 ```  
