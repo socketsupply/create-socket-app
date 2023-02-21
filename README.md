@@ -24,20 +24,6 @@ Copying project boilerplate...OK
 
 Type 'npm start' to launch the app
 
-$tree
-.
-├── README.md
-├── build.js
-├── package.json
-├── socket.ini
-├── src
-│   ├── icon.png
-│   ├── index.css
-│   ├── index.html
-│   └── index.js
-└── test
-    ├── index.js
-    └── test-context.js
 ```  
 
 
