@@ -2,7 +2,44 @@
 # Create Socket App 
 
 `Create Socket App` is similar to React's `Create React App`,it will help you build native apps for mobile and desktop with Svelte, Reactjs, Vuejs and others!  
-The idea is to provides a few basic boilerplates and some strong opinions so you can get coding on a production quality app as quickly as possible.
+The idea is to provides a few basic boilerplates and some strong opinions so you can get coding on a production quality app as quickly as possible.  
+
+## Quick Overview  
+
+```bash
+$npx create-socket-app -h
+
+usage: create-socket-app [react | svelte | tonic | vanilla | vue]  
+
+```
+```
+$npx create-socket-app
+
+Creating socket files...OK
+Initializing npm package...OK
+Installing dependencies...OK
+Adding package scripts...OK
+Updating project configuration...OK
+Copying project boilerplate...OK
+
+Type 'npm start' to launch the app
+
+$tree
+.
+├── README.md
+├── build.js
+├── package.json
+├── socket.ini
+├── src
+│   ├── icon.png
+│   ├── index.css
+│   ├── index.html
+│   └── index.js
+└── test
+    ├── index.js
+    └── test-context.js
+```  
+
 
 ## Getting Started 
 
