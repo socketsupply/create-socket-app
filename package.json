@@ -5,6 +5,9 @@
   "bin": {
     "create-socket-app": "./index.js"
   },
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "pretest": "standard",
     "test": ""
