@@ -1,5 +1,5 @@
-This is similar to React's `Create React App`. The idea is that it provides a
-few basic boilerplates and some stong opinions so you can get coding on a
+This is similar to React's `Create React App`. The idea is to provides a
+few basic boilerplates and some strong opinions so you can get coding on a
 production quality app as quickly as possible.
 
 ## Usage: 
