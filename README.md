@@ -56,6 +56,7 @@ yarn create socket-app [react | svelte | tonic | vanilla | vue]
 ```bash
 pnpm create socket-app [react | svelte | tonic | vanilla | vue]
 ```  
+![cmd](https://user-images.githubusercontent.com/79177582/221211905-4a774811-d0ba-45f5-9518-e8e6791461d5.jpg)
 
 ## Quick Demonstration Video
 
