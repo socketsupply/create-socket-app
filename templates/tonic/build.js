@@ -4,8 +4,10 @@
 //
 import fs from 'node:fs'
 import path from 'node:path'
-
+import os from 'node:os'
 import esbuild from 'esbuild'
+
+const dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 
 const cp = async (a, b) => fs.promises.cp(
   path.resolve(a),
@@ -22,7 +24,23 @@ async function main () {
     bundle: true,
     minify: !!prod,
     sourcemap: !prod,
-    external: ['socket:*']
+    external: ['node:*'],
+    plugins: []
+  }
+
+  if (os.platform() !== 'win32') {
+    params.external.push('socket:*')
+  } else {
+    params.plugins.push({
+      name: 'socket-runtime-import-path',
+      setup (build) {
+        build.onResolve({ filter: /^socket:.*$/ }, (args) => {
+          const basename = args.path.replace('socket:', '').replace(/.js$/, '') + '.js'
+          const filename = `./socket/${basename}`
+          return { path: filename, external: true }
+        })
+      }
+    })
   }
 
   const watch = process.argv.find(s => s.includes('--watch='))

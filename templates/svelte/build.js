@@ -4,8 +4,11 @@
 //
 import path from 'node:path'
 import fs from 'node:fs'
+import os from 'node:os'
 import { build } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+
+const dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 
 async function main () {
   const prod = process.argv.find(s => s.includes('--prod'))
@@ -38,12 +41,27 @@ async function main () {
         sourcemap: !prod,
         minify: !!prod ? 'esbuild' : false,
         rollupOptions: {
-          external: [/socket:.*/],
+          external: [],
         },
         // modulePreload: {
         //   polyfill: false
         // },
       },
+    })
+  }
+
+  if (os.platform() !== 'win32') {
+    params.rollupOptions.external.push(/socket:.*/)
+  } else {
+    params.plugins.push({
+      name: 'socket-runtime-import-path',
+      setup (build) {
+        build.onResolve({ filter: /^socket:.*$/ }, (args) => {
+          const basename = args.path.replace('socket:', '').replace(/.js$/, '') + '.js'
+          const filename = `./socket/${basename}`
+          return { path: filename, external: true }
+        })
+      }
     })
   }
   // TODO: Implement test mode
