@@ -10,6 +10,39 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 
 const dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 
+function socket_import()
+{
+  return {
+    name: 'socket-runtime-virtual-modules',  
+    transform(module, id) {
+      let pos = -1;
+      const SOCKET_PREFIX_LEN = 7;
+      do {
+        pos = module.search(/socket:.*/)
+        if (pos > -1) {
+          let sub = module.substring(pos+SOCKET_PREFIX_LEN);
+          let end_pos = sub.search(/'|\n/);
+          let end_char = sub[end_pos];
+          if (end_pos == -1) {
+            end_pos = sub.length;
+            end_char = '';
+          }
+
+          const basename = sub.substring(0, end_pos);
+          const filename =  `../node_modules/@socketsupply/socket/${basename}` + '.js' + end_char;
+          var debug = module.replace(/socket:.*/, filename)
+          module = module.replace(/socket:.*/, filename)
+        }
+      } while (pos > -1)
+
+      return {
+        code: module,
+        map: null
+      }
+    },
+  }
+}
+
 async function main () {
   const prod = process.argv.find(s => s.includes('--prod'))
 
@@ -29,19 +62,29 @@ async function main () {
   //
   //
   //
+
+  var external = [];
+  var plugins = [];
+  plugins.push(svelte())
+  if (os.platform() !== 'win32') {
+    external.push(/socket:.*/)
+  } else {
+    plugins.push(socket_import())
+  } 
+
   if (!watch) {
     await build({
       root: path.resolve('./src'),
       mode: prod ? 'production' : 'development',
       base: './',
-      plugins: [svelte()],
+      plugins: plugins,
       build: {
         outDir: target,
         emptyOutDir: false,
         sourcemap: !prod,
         minify: !!prod ? 'esbuild' : false,
         rollupOptions: {
-          external: [],
+          external: external,
         },
         // modulePreload: {
         //   polyfill: false
@@ -50,20 +93,6 @@ async function main () {
     })
   }
 
-  if (os.platform() !== 'win32') {
-    params.rollupOptions.external.push(/socket:.*/)
-  } else {
-    params.plugins.push({
-      name: 'socket-runtime-import-path',
-      setup (build) {
-        build.onResolve({ filter: /^socket:.*$/ }, (args) => {
-          const basename = args.path.replace('socket:', '').replace(/.js$/, '') + '.js'
-          const filename = `./socket/${basename}`
-          return { path: filename, external: true }
-        })
-      }
-    })
-  }
   // TODO: Implement test mode
   // if (process.argv.find(s => s.includes('--test'))) {
   //   ...
