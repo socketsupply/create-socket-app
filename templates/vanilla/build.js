@@ -5,9 +5,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
-import esbuild from 'esbuild'
 
-const dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
+import esbuild from 'esbuild'
 
 const cp = async (a, b) => fs.promises.cp(
   path.resolve(a),

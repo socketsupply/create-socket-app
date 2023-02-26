@@ -5,10 +5,9 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import os from 'node:os'
+
 import { build } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-
-const dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 
 function socket_import()
 {

@@ -5,10 +5,9 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import os from 'node:os'
+
 import { build } from 'vite'
 import vue from '@vitejs/plugin-vue'
-
-const dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 
 function socket_import()
 {
@@ -91,7 +90,7 @@ async function main () {
       },
     })
   }
-  
+
   // TODO: Implement test mode
   // if (process.argv.find(s => s.includes('--test'))) {
   //   ...
