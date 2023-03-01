@@ -2,7 +2,7 @@
 # Create Socket App 
 
 `Create Socket App` is similar to React's `Create React App`, it will help you build native apps for mobile and desktop with Svelte, Reactjs, Vuejs and others!  
-The idea is to provides a few basic boilerplates and some strong opinions so you can get coding on a production quality app as quickly as possible.  
+The idea is to provide a few basic boilerplates and some strong opinions so you can get coding on a production quality app as quickly as possible.  
 
 ## Set up your Socket environement  
 
@@ -56,15 +56,12 @@ yarn create socket-app [react | svelte | tonic | vanilla | vue]
 ```bash
 pnpm create socket-app [react | svelte | tonic | vanilla | vue]
 ```  
-![cmd](https://user-images.githubusercontent.com/79177582/221211905-4a774811-d0ba-45f5-9518-e8e6791461d5.jpg)
 
 ## Quick Demonstration Video
 
 
-https://user-images.githubusercontent.com/79177582/219162686-649bbdb9-015a-41bd-a613-af665a5a199e.mov  
 
-
-<!-- This is a draft video, I liked how they have a video tutorial in the `react native` website. if it's a good idea I'll make a better one-->
+https://user-images.githubusercontent.com/79177582/222207504-cea540e0-43f8-4152-8320-c7216e25f30d.mov
 
 
 ## Output:
@@ -91,6 +88,6 @@ Now inside of your directory, you should have a `directory structure` like this:
 
 `Create Socket app` works on : macOS, Windows, and linux.  
 
-If something doesn't work, please [Create an issue](https://github.com/socketsupply/create-socket-app). We'd love to have your helping on `Create Socket App`.  
+If something doesn't work, please [Create an issue](https://github.com/socketsupply/create-socket-app). We'd love to have your helping on `Create Socket App`! 
   
 If you have questions, please join our [Discord](https://discord.com/invite/YPV32gKCsH)
