@@ -34,8 +34,6 @@ Type 'npm start' to launch the app
 
 ## Getting Started 
 
-**You’ll need to have Node 16.0.0 or later version on your local development machine .**  
-
 Creat an empty directory and that's it, you are ready to go!
 
 You may choose one of the following methods: 
@@ -87,9 +85,6 @@ Now inside of your directory, you should have a `directory structure` like this:
 ```
 
 ## Contributing 
-
-`Create Socket app` works on : macOS, Windows, and linux.  
-
-If something doesn't work, please [Create an issue](https://github.com/socketsupply/create-socket-app). We'd love to have your helping on `Create Socket App`! 
-  
-If you have questions, please join our [Discord](https://discord.com/invite/YPV32gKCsH)
+ 
+If something doesn't work, please [Create an issue](https://github.com/socketsupply/create-socket-app).  
+If you have questions or need help, please join our [Discord](https://discord.com/invite/YPV32gKCsH).
