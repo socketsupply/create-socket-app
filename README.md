@@ -1,7 +1,6 @@
 
-# Create Socket App 
-<img align="right" width="100" height="100" src="https://avatars.githubusercontent.com/u/37015487?s=280&v=4">   
-
+# Create Socket App <a href="https://sockets.sh/"><img src="https://img.shields.io/badge/Socket%20Runtime-Website-black?style=flat-square"></a> 
+    
 `Create Socket App` is similar to React's `Create React App`.  
 It will help you build native apps for mobile and desktop with Svelte, Reactjs, Vuejs and others!  
 The idea is to provide a few basic boilerplates and some strong opinions so you can get coding on a production quality app as quickly as possible.  
