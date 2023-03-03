@@ -3,11 +3,11 @@
 import fs from 'node:fs/promises'
 import util from 'node:util'
 import path from 'node:path'
-import { exec as ecp } from 'node:child_process'
+import { exec as ecp, spawn } from 'node:child_process'
 import os from 'node:os'
 
 const exec = util.promisify(ecp)
-const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '');
+const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 const DEFAULT_TEMPLATE = 'vanilla'
 
 const cp = async (a, b) => fs.cp(
@@ -15,6 +15,14 @@ const cp = async (a, b) => fs.cp(
   path.join(b, path.basename(a)),
   { recursive: true, force: true }
 )
+
+const exists = async (path) => {
+  try {
+    await fs.access(path)
+    return true
+  } catch {}
+  return false
+}
 
 async function help (templateNames) {
   console.log(`usage: npm create socket-app [${templateNames.join(' | ')}]`)
@@ -44,11 +52,11 @@ templates.react = {
 }
 templates.vue = {
   deps: ['vue'],
-  devDeps: ['vite','@vitejs/plugin-vue']
+  devDeps: ['vite', '@vitejs/plugin-vue']
 }
 templates.svelte = {
   deps: ['svelte'],
-  devDeps: ['vite','@sveltejs/vite-plugin-svelte']
+  devDeps: ['vite', '@sveltejs/vite-plugin-svelte']
 }
 
 async function main (argv) {
@@ -148,7 +156,7 @@ async function main (argv) {
   ]
 
   try {
-    await exec(`ssc --version`)
+    await exec('ssc --version')
   } catch (err) {
     process.stdout.write('\nInstalling \'@socketsupply/socket\' locally (ssc not in PATH)')
     deps.push('@socketsupply/socket')
@@ -157,6 +165,24 @@ async function main (argv) {
   try {
     process.stdout.write('\nInstalling dependencies...')
     await exec(`npm install ${deps.join(' ')} --save`)
+
+    const platformPackage = `./node_modules/@socketsupply/socket-${os.platform()}-${os.arch()}`
+    const platformScript = 'bin/install-pre-reqs.js'
+
+    if (await exists(path.join(platformPackage, platformScript))) {
+      console.log(`running pre req script at ${path.join(platformPackage, platformScript)}`)
+      // spawn pre-reqs process so it can inherit stdin, npm install support this
+      const preResProcess = spawn(
+        'node',
+        [platformScript, 'install'],
+        {
+          cwd: platformPackage,
+          stdio: [process.stdin, process.stdout, process.stderr]
+        })
+      await new Promise((resolve, reject) => {
+        preResProcess.on('close', resolve).on('error', reject)
+      })
+    }
   } catch (err) {
     process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
     process.exit(1)
