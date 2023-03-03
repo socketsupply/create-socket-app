@@ -36,14 +36,14 @@ async function main () {
         outDir: target,
         emptyOutDir: false,
         sourcemap: !prod,
-        minify: !!prod ? 'esbuild' : false,
+        minify: prod ? 'esbuild' : false,
         rollupOptions: {
-          external: [/socket:.*/],
-        },
+          external: [/socket:.*/]
+        }
         // modulePreload: {
         //   polyfill: false
         // },
-      },
+      }
     })
   }
   // TODO: Implement test mode
