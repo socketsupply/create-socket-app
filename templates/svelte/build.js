@@ -16,7 +16,7 @@ async function main () {
   // The second argument to this program will be the target-OS specifc
   // directory for where to copy your build artifacts
   //
-    const target = path.resolve(process.argv[2])
+  const target = path.resolve(process.argv[2])
 
   //
   // If the watch command is specified, let esbuild start its server
@@ -36,14 +36,14 @@ async function main () {
         outDir: target,
         emptyOutDir: false,
         sourcemap: !prod,
-        minify: !!prod ? 'esbuild' : false,
+        minify: prod ? 'esbuild' : false,
         rollupOptions: {
-          external: [/socket:.*/],
-        },
+          external: [/socket:.*/]
+        }
         // modulePreload: {
         //   polyfill: false
         // },
-      },
+      }
     })
   }
   // TODO: Implement test mode
