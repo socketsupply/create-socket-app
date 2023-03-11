@@ -58,6 +58,10 @@ templates.svelte = {
   deps: ['svelte'],
   devDeps: ['vite', '@sveltejs/vite-plugin-svelte']
 }
+templates.react_ts = {
+  deps: ['react', 'react-dom', 'typescript', '@types/react', '@types/react-dom', '@types/node'],
+  devDeps: ['esbuild']
+}
 
 async function main (argv) {
   const templateName = argv[0] ?? DEFAULT_TEMPLATE
@@ -224,6 +228,41 @@ async function main (argv) {
     process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
   }
   process.stdout.write('OK')
+
+  //
+  //  Initialize tsconfig.json when react_ts 
+  //
+  if (templateName === 'react_ts') {
+    try {
+      process.stdout.write('\nCreating tsconfig....')
+      await exec(
+        'npx tsc --init --declaration --allowJs --emitDeclarationOnly --jsx react-jsx --lib "dom","dom.iterable","esnext" --outDir dist'
+      )
+    } catch (err) {
+      process.stderr.write(
+        `\nFailed to create tsconfig: ${err.stack ?? err.message}\n`
+      )
+      process.exit(1)
+    }
+
+    process.stdout.write('OK')
+
+    try {
+      process.stdout.write('\nSetting up TS configuration...')
+      await fs.writeFile(
+        'globals.d.ts',
+        "declare module 'socket:os'; \ndeclare module 'socket:test'; \ndeclare module 'socket:console'; \ndeclare module 'socket:process';"
+      )
+    } catch (err) {
+      process.stderr.write(
+        `\nFailed to create global.d.ts: ${
+          err.stack ?? err.message
+        }. Please do it manually :)\n`
+      )
+    }
+
+    process.stdout.write('OK')
+  }
 
   let config
   process.stdout.write('\nUpdating project configuration...')

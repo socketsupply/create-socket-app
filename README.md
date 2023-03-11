@@ -14,7 +14,7 @@ You can find more details about prerequisites, instructions, and many useful tip
 ```bash
 $npx create-socket-app -h
 
-usage: create-socket-app [react | svelte | tonic | vanilla | vue]  
+usage: create-socket-app [react | react_ts | svelte | tonic | vanilla | vue]  
 
 ```
 ```
