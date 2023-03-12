@@ -21,7 +21,7 @@ async function main() {
     format: 'esm',
     bundle: true,
     minify: !!prod,
-    sourcemap: !prod,
+    sourcemap: !!prod,
     external: ['socket:*']
   }
 

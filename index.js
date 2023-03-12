@@ -132,7 +132,7 @@ async function main (argv) {
     process.stderr.write(`Unable to run npm init: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   //
   // Install an opinionated base of modules for building a simple app.
@@ -151,7 +151,7 @@ async function main (argv) {
       process.exit(1)
     }
 
-    process.stdout.write('OK')
+    process.stdout.write('Ok.')
   }
 
   const deps = [
@@ -191,7 +191,7 @@ async function main (argv) {
     process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   process.stdout.write('\nAdding package scripts...')
   let pkg
@@ -216,7 +216,7 @@ async function main (argv) {
     process.exit(1)
   }
 
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   //
   // Initialize the current directory as a socket app.
@@ -227,14 +227,14 @@ async function main (argv) {
   } catch (err) {
     process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   //
   //  Initialize tsconfig.json when react_ts 
   //
   if (templateName === 'react_ts') {
     try {
-      process.stdout.write('\nCreating tsconfig....')
+      process.stdout.write('\nCreating tsconfig...')
       await exec(
         'npx tsc --init --declaration --allowJs --emitDeclarationOnly --jsx react-jsx --lib "dom","dom.iterable","esnext" --outDir dist'
       )
@@ -245,7 +245,7 @@ async function main (argv) {
       process.exit(1)
     }
 
-    process.stdout.write('OK')
+    process.stdout.write('Ok.')
 
     try {
       process.stdout.write('\nSetting up TS configuration...')
@@ -257,11 +257,11 @@ async function main (argv) {
       process.stderr.write(
         `\nFailed to create global.d.ts: ${
           err.stack ?? err.message
-        }. Please do it manually :)\n`
+        }. Please report this issue here: https://github.com/socketsupply/create-socket-app/issues \n`
       )
     }
 
-    process.stdout.write('OK')
+    process.stdout.write('Ok.')
   }
 
   let config
@@ -289,7 +289,7 @@ async function main (argv) {
     process.stderr.write(`\nUnable to write socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   process.stdout.write('\nCopying project boilerplate...')
 
@@ -312,7 +312,7 @@ async function main (argv) {
     process.stderr.write(`\nUnable to copy files: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   process.stdout.write('\n\nType \'npm start\' to launch the app\n')
 }
