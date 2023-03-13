@@ -13,7 +13,7 @@ const cp = async (a, b) =>
     force: true
   })
 
-async function main() {
+async function main () {
   const prod = process.argv.find((s) => s.includes('--prod'))
 
   const params = {
@@ -21,7 +21,7 @@ async function main() {
     format: 'esm',
     bundle: true,
     minify: !!prod,
-    sourcemap: !!prod,
+    sourcemap: !prod,
     external: ['socket:*']
   }
 

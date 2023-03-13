@@ -230,7 +230,7 @@ async function main (argv) {
   process.stdout.write('Ok.')
 
   //
-  //  Initialize tsconfig.json when react_ts 
+  //  Initialize tsconfig.json when react_ts
   //
   if (templateName === 'react-ts') {
     try {
