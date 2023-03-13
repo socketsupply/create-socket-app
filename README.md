@@ -14,7 +14,7 @@ You can find more details about prerequisites, instructions, and many useful tip
 ```bash
 $npx create-socket-app -h
 
-usage: create-socket-app [react | react_ts | svelte | tonic | vanilla | vue]  
+usage: create-socket-app [react | react-ts | svelte | tonic | vanilla | vue]  
 
 ```
 ```
@@ -41,19 +41,19 @@ You may choose one of the following methods:
 
 Any of these following commands will work
 ```bash
-npm init socket-app [react | react_ts | svelte | tonic | vanilla | vue]
-npm create socket-app [react | react_ts | svelte | tonic | vanilla | vue]
+npm init socket-app [react | react-ts | svelte | tonic | vanilla | vue]
+npm create socket-app [react | react-ts | svelte | tonic | vanilla | vue]
 
 ```
   
 ### **yarn**
 ```bash
-yarn create socket-app [react | react_ts | svelte | tonic | vanilla | vue]
+yarn create socket-app [react | react-ts | svelte | tonic | vanilla | vue]
 ```
 
 ### **pnpm**
 ```bash
-pnpm create socket-app [react | react_ts | svelte | tonic | vanilla | vue]
+pnpm create socket-app [react | react-ts | svelte | tonic | vanilla | vue]
 ```  
 
 ## Quick Demonstration Video

@@ -58,7 +58,7 @@ templates.svelte = {
   deps: ['svelte'],
   devDeps: ['vite', '@sveltejs/vite-plugin-svelte']
 }
-templates.react_ts = {
+templates['react-ts'] = {
   deps: ['react', 'react-dom', 'typescript', '@types/react', '@types/react-dom', '@types/node'],
   devDeps: ['esbuild']
 }
@@ -113,10 +113,10 @@ async function main (argv) {
     const entries = (await fs.readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
-    if (entries.length) {
-      process.stdout.write('\nThe current directory is not empty\n')
-      process.exit(1)
-    }
+    // if (entries.length) {
+    //   process.stdout.write('\nThe current directory is not empty\n')
+    //   process.exit(1)
+    // }
   } catch (err) {
     process.stderr.write(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`)
     process.exit(1)
@@ -232,7 +232,7 @@ async function main (argv) {
   //
   //  Initialize tsconfig.json when react_ts 
   //
-  if (templateName === 'react_ts') {
+  if (templateName === 'react-ts') {
     try {
       process.stdout.write('\nCreating tsconfig...')
       await exec(
@@ -257,7 +257,7 @@ async function main (argv) {
       process.stderr.write(
         `\nFailed to create global.d.ts: ${
           err.stack ?? err.message
-        }. Please report this issue here: https://github.com/socketsupply/create-socket-app/issues \n`
+        }.\nPlease report this issue here: https://github.com/socketsupply/create-socket-app/issues \n`
       )
     }
 
