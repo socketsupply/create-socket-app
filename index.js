@@ -113,10 +113,10 @@ async function main (argv) {
     const entries = (await fs.readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
-    // if (entries.length) {
-    //   process.stdout.write('\nThe current directory is not empty\n')
-    //   process.exit(1)
-    // }
+    if (entries.length) {
+      process.stdout.write('\nThe current directory is not empty\n')
+      process.exit(1)
+    }
   } catch (err) {
     process.stderr.write(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`)
     process.exit(1)
