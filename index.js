@@ -58,6 +58,10 @@ templates.svelte = {
   deps: ['svelte'],
   devDeps: ['vite', '@sveltejs/vite-plugin-svelte']
 }
+templates['react-ts'] = {
+  deps: ['react', 'react-dom', 'typescript', '@types/react', '@types/react-dom', '@types/node'],
+  devDeps: ['esbuild']
+}
 
 async function main (argv) {
   const templateName = argv[0] ?? DEFAULT_TEMPLATE
@@ -128,7 +132,7 @@ async function main (argv) {
     process.stderr.write(`Unable to run npm init: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.\n')
 
   //
   // Install an opinionated base of modules for building a simple app.
@@ -140,14 +144,14 @@ async function main (argv) {
 
   if (devDeps.length > 0) {
     try {
-      process.stdout.write('\nInstalling developer dependencies...')
+      process.stdout.write('Installing developer dependencies...')
       await exec(`npm install -D ${devDeps.join(' ')}`)
     } catch (err) {
       process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
       process.exit(1)
     }
 
-    process.stdout.write('OK')
+    process.stdout.write('Ok.\n')
   }
 
   const deps = [
@@ -158,12 +162,12 @@ async function main (argv) {
   try {
     await exec('ssc --version')
   } catch (err) {
-    process.stdout.write('\nInstalling \'@socketsupply/socket\' locally (ssc not in PATH)')
+    process.stdout.write('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n')
     deps.push('@socketsupply/socket')
   }
 
   try {
-    process.stdout.write('\nInstalling dependencies...')
+    process.stdout.write('Installing dependencies...\n')
     await exec(`npm install ${deps.join(' ')} --save`)
 
     const platformPackage = `./node_modules/@socketsupply/socket-${os.platform()}-${os.arch()}`
@@ -187,9 +191,9 @@ async function main (argv) {
     process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.\n')
 
-  process.stdout.write('\nAdding package scripts...')
+  process.stdout.write('Adding package scripts...')
   let pkg
 
   try {
@@ -212,21 +216,56 @@ async function main (argv) {
     process.exit(1)
   }
 
-  process.stdout.write('OK')
+  process.stdout.write('Ok.\n')
 
   //
   // Initialize the current directory as a socket app.
   //
   try {
-    process.stdout.write('\nCreating socket files...')
+    process.stdout.write('Creating socket files...')
     await exec('npm run init-project')
   } catch (err) {
     process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.\n')
+
+  //
+  //  Initialize tsconfig.json when react_ts
+  //
+  if (templateName === 'react-ts') {
+    try {
+      process.stdout.write('Creating tsconfig...')
+      await exec(
+        'npx tsc --init --declaration --allowJs --emitDeclarationOnly --jsx react-jsx --lib "dom","dom.iterable","esnext" --outDir dist'
+      )
+    } catch (err) {
+      process.stderr.write(
+        `\nFailed to create tsconfig: ${err.stack ?? err.message}\n`
+      )
+      process.exit(1)
+    }
+
+    process.stdout.write('Ok.\n')
+
+    try {
+      process.stdout.write('Setting up TS configuration...')
+      await fs.writeFile(
+        'globals.d.ts',
+        "declare module 'socket:os'; \ndeclare module 'socket:test'; \ndeclare module 'socket:console'; \ndeclare module 'socket:process';"
+      )
+    } catch (err) {
+      process.stderr.write(
+        `Failed to create global.d.ts: ${
+          err.stack ?? err.message
+        }.Please report this issue here: https://github.com/socketsupply/create-socket-app/issues\n`
+      )
+    }
+
+    process.stdout.write('Ok.\n')
+  }
 
   let config
-  process.stdout.write('\nUpdating project configuration...')
+  process.stdout.write('Updating project configuration...')
 
   try {
     config = await fs.readFile('socket.ini', 'utf8')
@@ -250,9 +289,9 @@ async function main (argv) {
     process.stderr.write(`\nUnable to write socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.\n')
 
-  process.stdout.write('\nCopying project boilerplate...')
+  process.stdout.write('Copying project boilerplate...')
 
   const dirsToCopy = [
     'common',
@@ -273,7 +312,7 @@ async function main (argv) {
     process.stderr.write(`\nUnable to copy files: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('OK')
+  process.stdout.write('Ok.')
 
   process.stdout.write('\n\nType \'npm start\' to launch the app\n')
 }
