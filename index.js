@@ -5,6 +5,7 @@ import util from 'node:util'
 import path from 'node:path'
 import { exec as ecp, spawn } from 'node:child_process'
 import os from 'node:os'
+import chalk from 'chalk'
 
 const exec = util.promisify(ecp)
 const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
@@ -73,7 +74,7 @@ async function main (argv) {
   }
 
   if (templateName && templateNames.findIndex(s => s === templateName) === -1) {
-    console.error(`Unable to find template "${templateName}"`)
+    console.error(chalk.redBright(`Unable to find template "${templateName}"`))// chalk error
     return help(templateNames)
   }
 
@@ -114,11 +115,11 @@ async function main (argv) {
       .filter(file => !accepted.includes(file))
 
     if (entries.length) {
-      process.stdout.write('\nThe current directory is not empty\n')
+      process.stdout.write(chalk.yellowBright('\nThe current directory is not empty\n'))// chalk warning
       process.exit(1)
     }
   } catch (err) {
-    process.stderr.write(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
 
@@ -126,13 +127,13 @@ async function main (argv) {
   // Create a package.json that has the module and a basic build setup.
   //
   try {
-    process.stdout.write('Initializing npm package...')
+    process.stdout.write(chalk.whiteBright('Initializing npm package...'))// chalk info
     await exec('npm init -y')
   } catch (err) {
-    process.stderr.write(`Unable to run npm init: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`Unable to run npm init: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
-  process.stdout.write('Ok.\n')
+  process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
 
   //
   // Install an opinionated base of modules for building a simple app.
@@ -144,14 +145,14 @@ async function main (argv) {
 
   if (devDeps.length > 0) {
     try {
-      process.stdout.write('Installing developer dependencies...')
+      process.stdout.write(chalk.whiteBright('Installing developer dependencies...'))// chalk info
       await exec(`npm install -D ${devDeps.join(' ')}`)
     } catch (err) {
-      process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
+      process.stderr.write(chalk.redBright(`\nUnable to run npm install: ${err.stack ?? err.message}\n`))// chalk error
       process.exit(1)
     }
 
-    process.stdout.write('Ok.\n')
+    process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
   }
 
   const deps = [
@@ -162,19 +163,19 @@ async function main (argv) {
   try {
     await exec('ssc --version')
   } catch (err) {
-    process.stdout.write('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n')
+    process.stdout.write(chalk.whiteBright('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n'))// chalk info
     deps.push('@socketsupply/socket')
   }
 
   try {
-    process.stdout.write('Installing dependencies...\n')
+    process.stdout.write(chalk.whiteBright('Installing dependencies...\n'))// chalk info
     await exec(`npm install ${deps.join(' ')} --save`)
 
     const platformPackage = `./node_modules/@socketsupply/socket-${os.platform()}-${os.arch()}`
     const platformScript = 'bin/install-pre-reqs.js'
 
     if (await exists(path.join(platformPackage, platformScript))) {
-      console.log(`running pre req script at ${path.join(platformPackage, platformScript)}`)
+      console.log(chalk.whiteBright(`running pre req script at ${path.join(platformPackage, platformScript)}`))// chalk info
       // spawn pre-reqs process so it can inherit stdin, npm install support this
       const preResProcess = spawn(
         'node',
@@ -188,18 +189,18 @@ async function main (argv) {
       })
     }
   } catch (err) {
-    process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to run npm install: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
-  process.stdout.write('Ok.\n')
+  process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
 
-  process.stdout.write('Adding package scripts...')
+  process.stdout.write(chalk.whiteBright('Adding package scripts...'))// chalk info
   let pkg
 
   try {
     pkg = JSON.parse(await fs.readFile('package.json'))
   } catch (err) {
-    process.stderr.write(`\nUnable to read package.json: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to read package.json: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
 
@@ -212,7 +213,7 @@ async function main (argv) {
   try {
     fs.writeFile('package.json', JSON.stringify(pkg, 2, 2))
   } catch (err) {
-    process.stderr.write(`\nUnable to write package.json: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to write package.json: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
 
@@ -222,55 +223,55 @@ async function main (argv) {
   // Initialize the current directory as a socket app.
   //
   try {
-    process.stdout.write('Creating socket files...')
+    process.stdout.write(chalk.whiteBright('Creating socket files...'))// chalk info
     await exec('npm run init-project')
   } catch (err) {
-    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to create socket files: ${err.stack ?? err.message}\n`))// chalk error
   }
-  process.stdout.write('Ok.\n')
+  process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
 
   //
-  //  Initialize tsconfig.json when react_ts
+  //  Initialize tsconfig.json when react-ts
   //
   if (templateName === 'react-ts') {
     try {
-      process.stdout.write('Creating tsconfig...')
+      process.stdout.write(chalk.blueBright('Creating tsconfig...'))// chalk ts
       await exec(
         'npx tsc --init --declaration --allowJs --emitDeclarationOnly --jsx react-jsx --lib "dom","dom.iterable","esnext" --outDir dist'
       )
     } catch (err) {
       process.stderr.write(
-        `\nFailed to create tsconfig: ${err.stack ?? err.message}\n`
+        chalk.redBright(`\nFailed to create tsconfig: ${err.stack ?? err.message}\n`)// chalk error
       )
       process.exit(1)
     }
 
-    process.stdout.write('Ok.\n')
+    process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
 
     try {
-      process.stdout.write('Setting up TS configuration...')
+      process.stdout.write(chalk.blueBright('Setting up TS configuration...'))// chalk ts
       await fs.writeFile(
         'globals.d.ts',
         "declare module 'socket:os'; \ndeclare module 'socket:test'; \ndeclare module 'socket:console'; \ndeclare module 'socket:process';"
       )
     } catch (err) {
       process.stderr.write(
-        `Failed to create global.d.ts: ${
+        chalk.redBright(`Failed to create global.d.ts: ${
           err.stack ?? err.message
-        }.Please report this issue here: https://github.com/socketsupply/create-socket-app/issues\n`
+        }.Please report this issue here: https://github.com/socketsupply/create-socket-app/issues\n`)// chalk error
       )
     }
 
-    process.stdout.write('Ok.\n')
+    process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
   }
 
   let config
-  process.stdout.write('Updating project configuration...')
+  process.stdout.write(chalk.whiteBright('Updating project configuration...'))// chalk info
 
   try {
     config = await fs.readFile('socket.ini', 'utf8')
   } catch (err) {
-    process.stderr.write(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
 
@@ -286,12 +287,12 @@ async function main (argv) {
   try {
     await fs.writeFile('socket.ini', config)
   } catch (err) {
-    process.stderr.write(`\nUnable to write socket.ini: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to write socket.ini: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
   }
-  process.stdout.write('Ok.\n')
+  process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
 
-  process.stdout.write('Copying project boilerplate...')
+  process.stdout.write(chalk.whiteBright('Copying project boilerplate...'))// chalk info
 
   const dirsToCopy = [
     'common',
@@ -303,7 +304,7 @@ async function main (argv) {
     const filesInGroups = await Promise.all(dirsToCopy.map(dir => fs.readdir(path.join(__dirname, dir))))
     filesToCopy = filesInGroups.map((group, i) => group.map(file => path.join(__dirname, dirsToCopy[i], file))).flat()
   } catch (err) {
-    process.stderr.write(`\nUnable to read template files: ${err.stack ?? err.message}\n`)
+    process.stderr.write(chalk.redBright(`\nUnable to read template files: ${err.stack ?? err.message}\n`))// chalk error
   }
 
   try {
@@ -312,9 +313,9 @@ async function main (argv) {
     process.stderr.write(`\nUnable to copy files: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  process.stdout.write('Ok.')
+  process.stdout.write(chalk.greenBright('Ok.'))// chalk success
 
-  process.stdout.write('\n\nType \'npm start\' to launch the app\n')
+  process.stdout.write(chalk.bold.whiteBright('\n\nType \'npm start\' to launch the app\n'))// chalk info
 }
 
 main(process.argv.slice(2))
