@@ -1,6 +1,6 @@
 {
   "name": "create-socket-app",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Create Socket App",
   "bin": {
     "create-socket-app": "./index.js"
@@ -25,5 +25,8 @@
   "homepage": "https://github.com/socketsupply/create-socket-app#readme",
   "devDependencies": {
     "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0"
   }
 }

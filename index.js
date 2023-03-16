@@ -114,10 +114,10 @@ async function main (argv) {
     const entries = (await fs.readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
-    // if (entries.length) {
-    //   process.stdout.write(chalk.yellowBright('\nThe current directory is not empty\n'))// chalk warning
-    //   process.exit(1)
-    // }
+    if (entries.length) {
+      process.stdout.write(chalk.yellowBright('\nThe current directory is not empty\n'))// chalk warning
+      process.exit(1)
+    }
   } catch (err) {
     process.stderr.write(chalk.redBright(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
@@ -217,7 +217,7 @@ async function main (argv) {
     process.exit(1)
   }
 
-  process.stdout.write(chalk.greenBright('Ok.\n'))//chalk success
+  process.stdout.write(chalk.greenBright('Ok.\n'))// chalk success
 
   //
   // Initialize the current directory as a socket app.
@@ -315,7 +315,7 @@ async function main (argv) {
   }
   process.stdout.write(chalk.greenBright('Ok.'))// chalk success
 
-  process.stdout.write(chalk.bold.whiteBright(`\n\nType\ ${chalk.yellowBright("'npm start'")}\ to launch the app\n`))// chalk info
+  process.stdout.write(chalk.bold.whiteBright(`\n\nType ${chalk.yellowBright("'npm start'")} to launch the app\n`))// chalk info
 }
 
 main(process.argv.slice(2))
