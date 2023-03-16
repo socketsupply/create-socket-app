@@ -114,10 +114,10 @@ async function main (argv) {
     const entries = (await fs.readdir(process.cwd()))
       .filter(file => !accepted.includes(file))
 
-    if (entries.length) {
-      process.stdout.write(chalk.yellowBright('\nThe current directory is not empty\n'))// chalk warning
-      process.exit(1)
-    }
+    // if (entries.length) {
+    //   process.stdout.write(chalk.yellowBright('\nThe current directory is not empty\n'))// chalk warning
+    //   process.exit(1)
+    // }
   } catch (err) {
     process.stderr.write(chalk.redBright(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`))// chalk error
     process.exit(1)
