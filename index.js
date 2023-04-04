@@ -169,24 +169,6 @@ async function main (argv) {
   try {
     process.stdout.write('Installing dependencies...\n')
     await exec(`npm install ${deps.join(' ')} --save`)
-
-    const platformPackage = `./node_modules/@socketsupply/socket-${os.platform()}-${os.arch()}`
-    const platformScript = 'bin/install-pre-reqs.js'
-
-    if (await exists(path.join(platformPackage, platformScript))) {
-      console.log(`running pre req script at ${path.join(platformPackage, platformScript)}`)
-      // spawn pre-reqs process so it can inherit stdin, npm install support this
-      const preResProcess = spawn(
-        'node',
-        [platformScript, 'install'],
-        {
-          cwd: platformPackage,
-          stdio: [process.stdin, process.stdout, process.stderr]
-        })
-      await new Promise((resolve, reject) => {
-        preResProcess.on('close', resolve).on('error', reject)
-      })
-    }
   } catch (err) {
     process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
     process.exit(1)
