@@ -273,15 +273,19 @@ async function main (argv) {
     process.stderr.write(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-
-  const oldCommand = '; script = "node build-script.js"'
-  const newCommand = 'script = "node build.js"'
-  const oldName = 'name = "beepboop"'
-  const newName = `name = "${pkg.name}"`
-
-  config = config
-    .replace(oldCommand, newCommand)
-    .replace(oldName, newName)
+  
+  config = config.split('\n').map((line, i) => {
+    if (line.includes('name = ')) {
+      return line.replace(line, `name = "${pkg.name}"`)
+    }
+    if (line.includes('copy = ') && !line.startsWith(';')) {
+      return line.replace(line, `; ${line}`)
+    }
+    if (line.includes('script = ')) {
+      return line.replace(line, 'script = "node build.js"')
+    }
+    return line
+  }).join('\n')
 
   try {
     await fs.writeFile('socket.ini', config)
