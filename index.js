@@ -273,21 +273,19 @@ async function main (argv) {
     process.stderr.write(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-
-  const oldName = 'name = "beepboop"'
-  const newName = `name = "${pkg.name}"`
-
-  config = config
-    .replace(oldName, newName)
   
-  config.split('\n').forEach((line, i) => {
+  config = config.split('\n').map((line, i) => {
+    if (line.includes('name = ')) {
+      return line.replace(line, `name = "${pkg.name}"`)
+    }
     if (line.includes('copy = ') && !line.startsWith(';')) {
-      config = config.replace(line, `; ${line}`)
+      return line.replace(line, `; ${line}`)
     }
     if (line.includes('script = ')) {
-      config = config.replace(line, 'script = "node build.js"')
+      return line.replace(line, 'script = "node build.js"')
     }
-  })
+    return line
+  }).join('\n')
 
   try {
     await fs.writeFile('socket.ini', config)
