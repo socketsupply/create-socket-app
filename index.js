@@ -16,14 +16,6 @@ const cp = async (a, b) => fs.cp(
   { recursive: true, force: true }
 )
 
-const exists = async (path) => {
-  try {
-    await fs.access(path)
-    return true
-  } catch {}
-  return false
-}
-
 async function help (templateNames) {
   console.log(`usage: npm create socket-app [${templateNames.join(' | ')}]`)
 }
@@ -205,7 +197,16 @@ async function main (argv) {
   //
   try {
     process.stdout.write('Creating socket files...')
-    await exec('npm run init-project')
+    // Use spawn so we can pass stdio, fte is interactive
+    const initProcess = spawn(
+      `npm${os.platform() === 'win32' ? '.cmd' : ''}`,
+      ['run', 'init-project'],
+      {
+        stdio: [process.stdin, process.stdout, process.stderr]
+      })
+    await new Promise((resolve, reject) => {
+      initProcess.on('close', resolve).on('error', reject)
+    })
   } catch (err) {
     process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
   }
