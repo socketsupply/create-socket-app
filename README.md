@@ -60,7 +60,10 @@ pnpm create socket-app [react | react-ts | svelte | tonic | vanilla | vue]
 
 
 
-https://user-images.githubusercontent.com/79177582/222207504-cea540e0-43f8-4152-8320-c7216e25f30d.mov
+
+https://github.com/socketsupply/create-socket-app/assets/79177582/eddfd2f3-bf8f-4727-87a6-5937deb28823
+
+
 
 
 ## Output:
