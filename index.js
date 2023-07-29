@@ -10,10 +10,29 @@ const exec = util.promisify(ecp)
 const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
 const DEFAULT_TEMPLATE = 'vanilla'
 
-const cp = async (a, b) => fs.cp(
+async function copyFileOrFolder (source, target) {
+  const stats = await fs.stat(source)
+
+  if (stats.isFile()) {
+    await fs.mkdir(path.dirname(target), { recursive: true })
+    await fs.copyFile(source, target)
+  } else if (stats.isDirectory()) {
+    await fs.mkdir(target, { recursive: true })
+
+    const files = await fs.readdir(source)
+
+    for (const file of files) {
+      const sourceFile = path.join(source, file)
+      const targetFile = path.join(target, file)
+
+      await copyFileOrFolder(sourceFile, targetFile)
+    }
+  }
+}
+
+const cp = async (a, b) => copyFileOrFolder(
   path.resolve(a),
-  path.join(b, path.basename(a)),
-  { recursive: true, force: true }
+  path.join(b, path.basename(a))
 )
 
 async function help (templateNames) {
@@ -256,7 +275,7 @@ async function main (argv) {
     process.stderr.write(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-  
+
   config = config.split('\n').map((line, i) => {
     if (line.includes('name = ')) {
       return line.replace(line, `name = "${pkg.name}"`)
