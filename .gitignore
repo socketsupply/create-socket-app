@@ -21,3 +21,5 @@ lerna-debug.log*
 
 # Ignore all files in the node_modules folder
 node_modules/
+package-lock.json
+coverage
