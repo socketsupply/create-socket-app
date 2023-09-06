@@ -17,9 +17,10 @@
     "checkJs": true,
     "allowJs": true,
     "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
 
-    "alwaysStrict": true,
-    "strictNullChecks": false,
+    "strict": true,
 
     "declaration": true,
     "declarationMap": true,
