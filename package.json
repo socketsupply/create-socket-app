@@ -9,6 +9,7 @@
     "node": ">=16"
   },
   "scripts": {
+    "prepublishOnly": "git push --follow-tags",
     "test": "run-s test:*",
     "test:standard": "standard",
     "test:node-test": "c8 node --test-reporter spec --test ./test.js"
