@@ -1,5 +1,3 @@
-import './test-context'
-
 import { test } from 'socket:test'
 import os from 'socket:os'
 
