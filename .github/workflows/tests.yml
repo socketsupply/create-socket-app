@@ -27,7 +27,7 @@ jobs:
         sudo apt-get install -y git libwebkit2gtk-4.1-dev build-essential libc++abi-14-dev libc++-14-dev pkg-config clang-14
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
