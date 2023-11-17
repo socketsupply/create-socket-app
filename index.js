@@ -286,6 +286,10 @@ async function main (argv) {
     if (line.includes('script = ')) {
       return line.replace(line, 'script = "node build.js"')
     }
+    // Socket 0.5 compatibility
+    if (line.includes('forward_arguments = ')) {
+      return line.replace(line, 'forward_arguments = true')
+    }
     return line
   }).join('\n')
 
