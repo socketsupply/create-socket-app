@@ -186,6 +186,12 @@ async function main (argv) {
   }
   process.stdout.write('Ok.\n')
 
+  const socketVersion = (await exec('npm info @socketsupply/socket version')).stdout.trim()
+    // split by dot
+    .split('.')
+    // convert to numbers
+    .map(s => parseInt(s))
+
   process.stdout.write('Adding package scripts...')
   let pkg
 
@@ -196,8 +202,10 @@ async function main (argv) {
     process.exit(1)
   }
 
+  const isSocket05orGreater = socketVersion[0] >= 1 || socketVersion[1] >= 5
+
   pkg.type = 'module'
-  pkg.scripts['init-project'] = 'ssc init'
+  pkg.scripts['init-project'] = `ssc init${isSocket05orGreater ? ' --config' : ''}`
   pkg.scripts.start = 'ssc build -r -o'
   pkg.scripts.build = 'ssc build -o'
   pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
@@ -287,7 +295,7 @@ async function main (argv) {
       return line.replace(line, 'script = "node build.js"')
     }
     // Socket 0.5 compatibility
-    if (line.includes('forward_arguments = ')) {
+    if (isSocket05orGreater && line.includes('forward_arguments = ')) {
       return line.replace(line, 'forward_arguments = true')
     }
     return line
