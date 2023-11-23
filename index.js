@@ -170,8 +170,21 @@ async function main (argv) {
     ...templates[templateName]?.deps ?? []
   ]
 
+  // remove eventually
+  let isSocket05orGreater = true
+
   try {
-    await exec('ssc --version')
+    const { stdout } = await exec('ssc --version')
+
+    try  {
+      sscVersion = stdout.trim().split(' ')[0]
+        // split by dot
+        .split('.')
+        // convert to numbers
+        .map(s => parseInt(s))
+
+      isSocket05orGreater = sscVersion[0] >= 1 || sscVersion[1] >= 5
+    } catch (err) {}
   } catch (err) {
     process.stdout.write('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n')
     deps.push('@socketsupply/socket')
@@ -186,12 +199,6 @@ async function main (argv) {
   }
   process.stdout.write('Ok.\n')
 
-  const socketVersion = (await exec('npm info @socketsupply/socket version')).stdout.trim()
-    // split by dot
-    .split('.')
-    // convert to numbers
-    .map(s => parseInt(s))
-
   process.stdout.write('Adding package scripts...')
   let pkg
 
@@ -201,8 +208,6 @@ async function main (argv) {
     process.stderr.write(`\nUnable to read package.json: ${err.stack ?? err.message}\n`)
     process.exit(1)
   }
-
-  const isSocket05orGreater = socketVersion[0] >= 1 || socketVersion[1] >= 5
 
   pkg.type = 'module'
   pkg.scripts['init-project'] = `ssc init${isSocket05orGreater ? ' --config' : ''}`
