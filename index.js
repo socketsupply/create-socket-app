@@ -176,8 +176,8 @@ async function main (argv) {
   try {
     const { stdout } = await exec('ssc --version')
 
-    try  {
-      sscVersion = stdout.trim().split(' ')[0]
+    try {
+      const sscVersion = stdout.trim().split(' ')[0]
         // split by dot
         .split('.')
         // convert to numbers
