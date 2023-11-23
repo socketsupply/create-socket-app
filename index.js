@@ -191,7 +191,7 @@ async function main (argv) {
   }
 
   try {
-    process.stdout.write('Installing dependencies...\n')
+    process.stdout.write('Installing dependencies...')
     await exec(`npm install ${deps.join(' ')} --save`)
   } catch (err) {
     process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
