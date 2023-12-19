@@ -1,343 +1,162 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs/promises'
-import util from 'node:util'
-import path from 'node:path'
-import { exec as ecp, spawn } from 'node:child_process'
-import os from 'node:os'
+import { execSync, spawn } from 'node:child_process'
+import { resolve } from 'node:path'
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 
-const exec = util.promisify(ecp)
-const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
-const DEFAULT_TEMPLATE = 'vanilla'
+const NPM = 'npm'
 
-async function copyFileOrFolder (source, target) {
-  const stats = await fs.stat(source)
+const CSP = `
+<meta
+  http-equiv="Content-Security-Policy"
+  content="
+    connect-src https: file: ipc: socket: ws://localhost:*;
+    script-src https: socket: http://localhost:* 'unsafe-eval';
+    img-src https: data: file: http://localhost:*;
+    child-src 'none';
+    object-src 'none';
+  "
+>`
 
-  if (stats.isFile()) {
-    await fs.mkdir(path.dirname(target), { recursive: true })
-    await fs.copyFile(source, target)
-  } else if (stats.isDirectory()) {
-    await fs.mkdir(target, { recursive: true })
-
-    const files = await fs.readdir(source)
-
-    for (const file of files) {
-      const sourceFile = path.join(source, file)
-      const targetFile = path.join(target, file)
-
-      await copyFileOrFolder(sourceFile, targetFile)
-    }
-  }
+function getPackageManager (userAgent) {
+  if (typeof userAgent !== 'string') return NPM
+  const [packageManager] = userAgent.split(' ')
+  const [packageManagerName] = packageManager.split('/')
+  return packageManagerName ?? NPM
 }
 
-const cp = async (a, b) => copyFileOrFolder(
-  path.resolve(a),
-  path.join(b, path.basename(a))
-)
-
-async function help (templateNames) {
-  console.log(`usage: npm create socket-app [${templateNames.join(' | ')}]`)
+function getViteCreateCommand ({ packageManager, projectName = '', restViteOptions }) {
+  const rest = restViteOptions.length === 0
+    ? ''
+    : ` ${packageManager === NPM ? '--' : ''} ${restViteOptions.join(' ')}`
+  return `${packageManager} create vite@latest ${projectName}${rest}`
 }
 
-async function install () {
-}
+const [projectName, ...restViteOptions] = process.argv.slice(2)
+const packageManager = getPackageManager(process.env.npm_config_user_agent)
+const viteCreateCommand = getViteCreateCommand({
+  packageManager,
+  projectName,
+  restViteOptions
+})
 
-const DEFAULT_DEPS = [
-]
+process.stdout.write(`\nCreating a vite project with command:\n${viteCreateCommand}\n\n`)
 
-const DEFAULT_DEV_DEPS = [
-]
+const viteProcess = spawn(viteCreateCommand, [], {
+  shell: true,
+  stdio: 'inherit',
+  encoding: 'utf-8'
+})
 
-const templates = {}
-
-templates.vanilla = {
-  devDeps: ['esbuild']
-}
-templates.tonic = {
-  deps: ['@socketsupply/tonic'],
-  devDeps: ['esbuild']
-}
-templates.react = {
-  deps: ['react', 'react-dom'],
-  devDeps: ['esbuild']
-}
-templates.vue = {
-  deps: ['vue'],
-  devDeps: ['vite', '@vitejs/plugin-vue']
-}
-templates.svelte = {
-  deps: ['svelte'],
-  devDeps: ['vite', '@sveltejs/vite-plugin-svelte']
-}
-templates['react-ts'] = {
-  deps: ['react', 'react-dom', 'typescript', '@types/react', '@types/react-dom', '@types/node'],
-  devDeps: ['esbuild']
-}
-
-async function main (argv) {
-  const templateName = argv[0] ?? DEFAULT_TEMPLATE
-
-  const templateNames = await fs.readdir(path.join(__dirname, 'templates'))
-
-  if (argv.find(s => s.includes('-h'))) {
-    return help(templateNames)
-  }
-
-  if (templateName && templateNames.findIndex(s => s === templateName) === -1) {
-    console.error(`Unable to find template "${templateName}"`)
-    return help(templateNames)
-  }
-
-  //
-  // Check if the ssc command is installed, if not install it.
-  //
-  try {
-    await exec('ssc')
-  } catch (err) {
-    if (err.code === 127) await install()
-  }
-
-  //
-  // If the current directory is not empty, refuse to initialize it.
-  // Empty excludes the following list of files from the directory.
-  //
-  const accepted = [
-    '.DS_Store',
-    '.git',
-    '.gitattributes',
-    '.gitignore',
-    '.gitlab-ci.yml',
-    '.hg',
-    '.hgcheck',
-    '.hgignore',
-    '.idea',
-    '.npmignore',
-    '.travis.yml',
-    'docs',
-    'LICENSE',
-    'README.md',
-    'mkdocs.yml',
-    'Thumbs.db'
-  ]
+viteProcess.on('close', (code) => {
+  const cwd = resolve(process.cwd(), projectName)
 
   try {
-    const entries = (await fs.readdir(process.cwd()))
-      .filter(file => !accepted.includes(file))
-
-    if (entries.length) {
-      process.stdout.write('\nThe current directory is not empty\n')
-      process.exit(1)
-    }
-  } catch (err) {
-    process.stderr.write(`\nUnable to read the current directory: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-
-  //
-  // Create a package.json that has the module and a basic build setup.
-  //
-  try {
-    process.stdout.write('Initializing npm package...')
-    await exec('npm init -y')
-  } catch (err) {
-    process.stderr.write(`Unable to run npm init: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-  process.stdout.write('Ok.\n')
-
-  //
-  // Install an opinionated base of modules for building a simple app.
-  //
-  const devDeps = [
-    ...DEFAULT_DEV_DEPS,
-    ...templates[templateName]?.devDeps ?? []
-  ]
-
-  if (devDeps.length > 0) {
-    try {
-      process.stdout.write('Installing developer dependencies...')
-      await exec(`npm install -D ${devDeps.join(' ')}`)
-    } catch (err) {
-      process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
-      process.exit(1)
-    }
-
-    process.stdout.write('Ok.\n')
-  }
-
-  const deps = [
-    ...DEFAULT_DEPS,
-    ...templates[templateName]?.deps ?? []
-  ]
-
-  // remove eventually
-  let isSocket05orGreater = true
-
-  try {
-    const { stdout } = await exec('ssc --version')
-
-    try {
-      const sscVersion = stdout.trim().split(' ')[0]
-        // split by dot
-        .split('.')
-        // convert to numbers
-        .map(s => parseInt(s))
-
-      isSocket05orGreater = sscVersion[0] >= 1 || sscVersion[1] >= 5
-    } catch (err) {}
-  } catch (err) {
-    process.stdout.write('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n')
-    deps.push('@socketsupply/socket')
-  }
-
-  try {
-    process.stdout.write('Installing dependencies...')
-    await exec(`npm install ${deps.join(' ')} --save`)
-  } catch (err) {
-    process.stderr.write(`\nUnable to run npm install: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-  process.stdout.write('Ok.\n')
-
-  process.stdout.write('Adding package scripts...')
-  let pkg
-
-  try {
-    pkg = JSON.parse(await fs.readFile('package.json'))
-  } catch (err) {
-    process.stderr.write(`\nUnable to read package.json: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-
-  pkg.type = 'module'
-  pkg.scripts['init-project'] = `ssc init${isSocket05orGreater ? ' --config' : ''}`
-  pkg.scripts.start = 'ssc build -r -o'
-  pkg.scripts.build = 'ssc build -o'
-  pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
-
-  try {
-    fs.writeFile('package.json', JSON.stringify(pkg, 2, 2))
-  } catch (err) {
-    process.stderr.write(`\nUnable to write package.json: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-
-  process.stdout.write('Ok.\n')
-
-  //
-  // Initialize the current directory as a socket app.
-  //
-  try {
-    process.stdout.write('Creating socket files...')
-    // Use spawn so we can pass stdio, fte is interactive
-    const initProcess = spawn(
-      `npm${os.platform() === 'win32' ? '.cmd' : ''}`,
-      ['run', 'init-project'],
-      {
-        stdio: [process.stdin, process.stdout, process.stderr]
-      })
-    await new Promise((resolve, reject) => {
-      initProcess.on('close', resolve).on('error', reject)
+    execSync('ssc --version', {
+      stdio: 'ignore'
     })
-  } catch (err) {
-    process.stderr.write(`\nUnable to create socket files: ${err.stack ?? err.message}\n`)
-  }
-  process.stdout.write('Ok.\n')
-
-  //
-  //  Initialize tsconfig.json when react_ts
-  //
-  if (templateName === 'react-ts') {
-    try {
-      process.stdout.write('Creating tsconfig...')
-      await exec(
-        'npx tsc --init --declaration --allowJs --emitDeclarationOnly --jsx react-jsx --lib "dom","dom.iterable","esnext" --outDir dist'
-      )
-    } catch (err) {
-      process.stderr.write(
-        `\nFailed to create tsconfig: ${err.stack ?? err.message}\n`
-      )
-      process.exit(1)
-    }
-
-    process.stdout.write('Ok.\n')
-
-    try {
-      process.stdout.write('Setting up TS configuration...')
-      await fs.writeFile(
-        'globals.d.ts',
-        "declare module 'socket:os'; \ndeclare module 'socket:test'; \ndeclare module 'socket:console'; \ndeclare module 'socket:process';"
-      )
-    } catch (err) {
-      process.stderr.write(
-        `Failed to create global.d.ts: ${
-          err.stack ?? err.message
-        }.Please report this issue here: https://github.com/socketsupply/create-socket-app/issues\n`
-      )
-    }
-
-    process.stdout.write('Ok.\n')
-  }
-
-  let config
-  process.stdout.write('Updating project configuration...')
-
-  try {
-    config = await fs.readFile('socket.ini', 'utf8')
-  } catch (err) {
-    process.stderr.write(`\nUnable to read socket.ini: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-
-  config = config.split('\n').map((line, i) => {
-    if (line.includes('name = ')) {
-      return line.replace(line, `name = "${pkg.name}"`)
-    }
-    if (line.includes('copy = ') && !line.startsWith(';')) {
-      return line.replace(line, `; ${line}`)
-    }
-    if (line.includes('script = ')) {
-      return line.replace(line, 'script = "node build.js"')
-    }
-    // Socket 0.5 compatibility
-    if (isSocket05orGreater && line.includes('forward_arguments = ')) {
-      return line.replace(line, 'forward_arguments = true')
-    }
-    return line
-  }).join('\n')
-
-  try {
-    await fs.writeFile('socket.ini', config)
-  } catch (err) {
-    process.stderr.write(`\nUnable to write socket.ini: ${err.stack ?? err.message}\n`)
-    process.exit(1)
-  }
-  process.stdout.write('Ok.\n')
-
-  process.stdout.write('Copying project boilerplate...')
-
-  const dirsToCopy = [
-    'common',
-    `templates/${templateName}`
-  ]
-
-  let filesToCopy
-  try {
-    const filesInGroups = await Promise.all(dirsToCopy.map(dir => fs.readdir(path.join(__dirname, dir))))
-    filesToCopy = filesInGroups.map((group, i) => group.map(file => path.join(__dirname, dirsToCopy[i], file))).flat()
-  } catch (err) {
-    process.stderr.write(`\nUnable to read template files: ${err.stack ?? err.message}\n`)
+  } catch {
+    process.stdout.write('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n\n')
+    execSync('npm install @socketsupply/socket --save-dev')
   }
 
   try {
-    await Promise.all(filesToCopy.map(dir => cp(dir, process.cwd())))
-  } catch (err) {
-    process.stderr.write(`\nUnable to copy files: ${err.stack ?? err.message}\n`)
-    process.exit(1)
+    execSync('npm install', {
+      cwd,
+      stdio: 'inherit'
+    })
+  } catch (error) {
+    // create-vite operation was cancelled
+    if (error.code === 'ENOENT') process.exit(0)
   }
-  process.stdout.write('Ok.')
 
-  process.stdout.write('\n\nType \'npm start\' to launch the app\n')
-}
+  process.stdout.write('\nAdding the socket.ini file to the project\n')
 
-main(process.argv.slice(2))
+  execSync(`ssc init --name=${projectName}`, {
+    cwd,
+    stdio: 'inherit'
+  })
+
+  process.stdout.write('\nPatching socket.ini for the create-vite\n')
+
+  const socketIniPath = resolve(cwd, 'socket.ini')
+  const socketIni = readFileSync(socketIniPath, 'utf-8')
+  const modifiedSocketIni = socketIni
+    .replace(
+      'copy = "src"',
+      'copy = "dist"'
+    )
+    .replace(
+      '; script = "npm run build"',
+      'script = "npm run build"'
+    )
+  writeFileSync(socketIniPath, modifiedSocketIni, 'utf8')
+
+  process.stdout.write('\nPatching index.html for the create-vite\n')
+
+  const indexHTMLPath = resolve(cwd, 'index.html')
+  const indexHTML = readFileSync(indexHTMLPath, 'utf-8')
+  const modifiedData = indexHTML.replace('<head>', '<head>\n' + CSP + '\n')
+  writeFileSync(indexHTMLPath, modifiedData, 'utf8')
+
+  // So TypeScript doesn't complain about about String#startsWith in the vite.config.ts
+  if (existsSync(resolve(cwd, 'tsconfig.node.json'))) {
+    process.stdout.write('\nPatching tsconfig.node.json\n')
+
+    const tsconfigNodeJSONPath = resolve(cwd, 'tsconfig.node.json')
+    const tsconfigNodeJSON = readFileSync(tsconfigNodeJSONPath, 'utf-8')
+
+    if (!tsconfigNodeJSON.includes('"lib": ["ESNext"],')) {
+      const modifiedTsconfigNodeJSON = tsconfigNodeJSON.replace(
+        '"compilerOptions": {',
+        '"compilerOptions": {\n    "lib": ["ESNext"],'
+      )
+      writeFileSync(tsconfigNodeJSONPath, modifiedTsconfigNodeJSON, 'utf8')
+    }
+  }
+
+  let isViteConfigExists = false
+  ['js', 'ts'].forEach((ext) => {
+    // patching the vite.config.js to make socket:* modules external
+    if (existsSync(resolve(cwd, `vite.config.${ext}`))) {
+      process.stdout.write('\nPatching vite.config.' + ext + '\n')
+
+      const viteConfigPath = resolve(cwd, 'vite.config.js')
+      const viteConfig = readFileSync(viteConfigPath, 'utf-8')
+
+      // make socket:* modules external for build
+      if (!viteConfig.includes('external(id)')) {
+        const modifiedViteConfig = viteConfig.replace(
+          'defineConfig({',
+          'defineConfig({\n  build: {\n    rollupOptions: {\n      external(id) {\n        return id.startsWith(\'socket:\')\n      }\n    }\n  },'
+        )
+        writeFileSync(viteConfigPath, modifiedViteConfig, 'utf8')
+      }
+    }
+    isViteConfigExists = true
+  })
+
+  if (!isViteConfigExists) {
+    process.stdout.write('\nCreating vite.config.js\n')
+
+    const viteConfigPath = resolve(cwd, 'vite.config.js')
+    const viteConfig = `
+import { defineConfig } from 'vite'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      external(id) {
+        return id.startsWith('socket:')
+      }
+    }
+  },
+})
+`
+    writeFileSync(viteConfigPath, viteConfig, 'utf8')
+  }
+
+
+  process.stdout.write(`\nDone!\n\nBuild and run your app with:\nssc build -r ${projectName}`)
+})
