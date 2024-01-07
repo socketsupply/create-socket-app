@@ -16,7 +16,7 @@ async function main () {
   // The second argument to this program will be the target-OS specifc
   // directory for where to copy your build artifacts
   //
-  const target = path.resolve(process.argv[2])
+  const target = path.resolve(process.env.PREFIX)
 
   //
   // If the watch command is specified, let esbuild start its server
