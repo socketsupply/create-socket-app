@@ -197,6 +197,7 @@ async function main (argv) {
   }
 
   pkg.type = 'module'
+  pkg.scripts['init-project'] = 'ssc init --config'
   pkg.scripts.start = 'ssc build -r -o'
   pkg.scripts.build = 'ssc build -o'
   pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
@@ -217,8 +218,8 @@ async function main (argv) {
     process.stdout.write('Creating socket files...')
     // Use spawn so we can pass stdio, fte is interactive
     const initProcess = spawn(
-      'ssc',
-      ['init', '--config'],
+      `npm${os.platform() === 'win32' ? '.cmd' : ''}`,
+      ['run', 'init-project'],
       {
         stdio: [process.stdin, process.stdout, process.stderr]
       })
