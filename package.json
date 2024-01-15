@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/socketsupply/create-socket-app#readme",
   "devDependencies": {
-    "c8": "^8.0.1",
+    "c8": "^9.1.0",
     "desm": "^1.3.0",
     "npm-run-all2": "^6.0.6",
     "p-temporary-directory": "^2.0.0",
