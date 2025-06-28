@@ -6,8 +6,11 @@ import path from 'node:path'
 import { exec as ecp, spawn } from 'node:child_process'
 import os from 'node:os'
 
-const exec = util.promisify(ecp)
 const __dirname = path.dirname(import.meta.url).replace(`file://${os.platform() === 'win32' ? '/' : ''}`, '')
+
+const csaVersion = JSON.parse(await fs.readFile(path.join(__dirname, './package.json'))).version
+
+const exec = util.promisify(ecp)
 const DEFAULT_TEMPLATE = 'vanilla'
 
 async function copyFileOrFolder (source, target) {
@@ -36,6 +39,7 @@ const cp = async (a, b) => copyFileOrFolder(
 )
 
 async function help (templateNames) {
+  console.log(`create-socket-app v${csaVersion}`)
   console.log(`usage: npm create socket-app [${templateNames.join(' | ')}]`)
 }
 
@@ -79,7 +83,7 @@ async function main (argv) {
 
   const templateNames = await fs.readdir(path.join(__dirname, 'templates'))
 
-  if (argv.find(s => s.includes('-h'))) {
+  if (argv.find(s => s.includes('-h')) || argv.find(s => s.includes('--help')) || argv.find(s => s.includes('-v')) || argv.find(s => s.includes('--version'))) {
     return help(templateNames)
   }
 
