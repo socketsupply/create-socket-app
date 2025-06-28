@@ -170,21 +170,8 @@ async function main (argv) {
     ...templates[templateName]?.deps ?? []
   ]
 
-  // remove eventually
-  let isSocket05orGreater = true
-
   try {
-    const { stdout } = await exec('ssc --version')
-
-    try {
-      const sscVersion = stdout.trim().split(' ')[0]
-        // split by dot
-        .split('.')
-        // convert to numbers
-        .map(s => parseInt(s))
-
-      isSocket05orGreater = sscVersion[0] >= 1 || sscVersion[1] >= 5
-    } catch (err) {}
+    await exec('ssc --version')
   } catch (err) {
     process.stdout.write('Installing \'@socketsupply/socket\' locally (ssc not in PATH)\n')
     deps.push('@socketsupply/socket')
@@ -210,7 +197,7 @@ async function main (argv) {
   }
 
   pkg.type = 'module'
-  pkg.scripts['init-project'] = `ssc init${isSocket05orGreater ? ' --config' : ''}`
+  pkg.scripts['init-project'] = 'ssc init --config'
   pkg.scripts.start = 'ssc build -r -o'
   pkg.scripts.build = 'ssc build -o'
   pkg.scripts.test = 'ssc build -r -o --test=./test/index.js --headless'
@@ -298,10 +285,6 @@ async function main (argv) {
     }
     if (line.includes('script = ')) {
       return line.replace(line, 'script = "node build.js"')
-    }
-    // Socket 0.5 compatibility
-    if (isSocket05orGreater && line.includes('forward_arguments = ')) {
-      return line.replace(line, 'forward_arguments = true')
     }
     return line
   }).join('\n')
